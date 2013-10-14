@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Last fabrics runs" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			<tr><th>{% trans "Script" %}</th><th>{% trans "When" %}</th></tr>
+			{% for run in object.last_runs %}
+				<tr>
+					<td>
+						<a href="{% url 'fabrun.views.show_run' run.pk %}">{{run.command}}</a>
+					</td>
+					<td>
+						{{run.creation_date|timesince}} {% trans "ago" %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>

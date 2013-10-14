@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Groups{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "Groups management" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-groups').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Edition of a group" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<form action="" method="POST" class="form-horizontal">
+						{% csrf_token %}
+
+						{{form|as_bootstrap }}
+
+						<div class="row-fluid box-section" style="text-align: right;">
+			                <a href="{% url 'groups.views.groups_list' %}" class="btn">{% trans "Back to the list" %}</a>
+			                <input type="submit" class="btn btn-primary" value="{% trans "Save" %}">
+			            </div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		$("#id_users,#id_servers,#id_servers_keys,#id_allowed_servers,#id_allowed_servers_users").css('width', '200px').select2();
+
+		$('#id_name').parent().parent().before('<h3>{% trans 'General' %}');
+		$('#id_users').parent().parent().before('<h3>{% trans 'Members' %}');
+
+		$('#id_allowed_servers').parent().parent().before('<h3>{% trans 'Members access' %}');
+
+		$('.select2-offscreen').parent().find('.help-inline').hide();
+
+	</script>
+
+{% endblock %}
+

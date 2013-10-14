@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Wizards{% endblock %}
+
+{% block content %}
+
+	<h3>Wizards</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-wizard').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Start a new wizard" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+                	<form action="" method="POST">
+                		{% csrf_token %}
+
+						<div class="control-group required">
+							<label class="control-label" for="">{% trans "Script" %}</label>
+							<div class="controls" style="margin-top: 5px;">
+								<select name="script" id="script" placeholder="{% trans "Select a script" %}">
+									<option></option>
+									{% for s in liste %}
+										<option value="{{s.2}}" text="{{s.1}}">{{s.0}}</option>
+									{% endfor %}
+								</select>
+								<span style="font-size: 80%" id="script-text"></span>
+							</div>
+						</div>
+
+						<div class="row-fluid box-section" style="text-align: right;">
+			                <input type="submit" class="btn btn-primary" value="{% trans "Run" %}">
+			            </div>
+
+
+                	</form>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$('#script').css('width', '420px').select2().on('change', function(e) {console.log(e); $('#script-text').html($(e.added.element).attr('text'));});
+	</script>
+
+{% endblock %}
+ 

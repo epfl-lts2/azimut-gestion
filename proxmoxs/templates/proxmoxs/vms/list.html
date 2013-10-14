@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}Proxmoxs{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "VMs management" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-proxmoxs').addClass('active'); });</script>
+
+    <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "List of VMs" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-to-sort-but-not-automaticaly">
+						<thead>
+							<tr>
+								<th>{% trans "Server" %}</th>
+								<th>{% trans "Name" %}</th>
+								<th>{% trans "Id" %}</th>
+								<th>{% trans "Ip" %}</th>
+								<th>{% trans "Status" %}</th>
+								<th>{% trans "Uptime" %}</th>
+								<th>{% trans "Process" %}</th>
+								<th style="width: 100px;">{% trans "CPU" %}</th>
+								<th>{% trans "RAM" %}</th>
+								<th>{% trans "SWAP" %}</th>
+								<th>{% trans "Disk" %}</th>
+								<!--<th>{% trans "Disk I/O" %}</th>-->
+								<th>{% trans "Net I/O" %}</th>
+								
+								<th style="width: 100px;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for elem in liste %}
+								{% for vm in elem.1 %}
+									<tr>
+										<td>{% if forloop.first %}<a href="{% url 'servers.views.servers_show' elem.0.pk %}">{{elem.0.name}}</a>{% endif %}</td>
+										<td>
+											{% if vm.server %}<a href="{% url 'servers.views.servers_show' vm.server.pk %}">{% endif %}
+												{{vm.name}}
+											{% if vm.server %}</a>{% else %}<br /><span class="label label-important">{% trans "Cannot find server ?" %}</span>{% endif %}
+										</td>
+										<td>{{vm.vmid}}</td>
+										<td>{{vm.ip}}</td>
+										<td>{{vm.status}}</td>
+										<td>
+											{{vm.uptime_d}}d,
+											{{vm.uptime_h}}h,
+											{{vm.uptime_m}}m,
+											{{vm.uptime_s}}s
+
+										</td>
+
+										<td>{{vm.nproc}}</td>
+
+										<td>{{vm.cpu|floatformat:3}}/{{vm.cpus}}
+
+											<div class="progress progress-{{vm.cpu_percent_color}}" style="width: 100%; margin-bottom: 0px;">
+												<div class="bar" style="width: {{vm.cpu_percent|floatformat:0}}%;"></div>
+											</div>
+
+										</td>
+										<td>{{vm.mem|filesizeformat}}/{{vm.maxmem|filesizeformat}}
+
+											<div class="progress progress-{{vm.mem_percent_color}}" style="width: 100%; margin-bottom: 0px;">
+												<div class="bar" style="width: {{vm.mem_percent|floatformat:0}}%;"></div>
+											</div>
+
+										</td>
+
+										<td>{{vm.swap|filesizeformat}}/{{vm.maxswap|filesizeformat}}
+
+											<div class="progress progress-{{vm.swap_percent_color}}" style="width: 100%; margin-bottom: 0px;">
+												<div class="bar" style="width: {{vm.swap_percent|floatformat:0}}%;"></div>
+											</div>
+
+										</td>
+										
+										<td>{{vm.disk|filesizeformat}}/{{vm.maxdisk|filesizeformat}}
+
+											<div class="progress progress-{{vm.disk_percent_color}}" style="width: 100%; margin-bottom: 0px;">
+												<div class="bar" style="width: {{vm.disk_percent|floatformat:0}}%;"></div>
+											</div>
+
+										</td>
+
+										<td>
+											<i class="icon-arrow-down" title="In"> </i>{{vm.netin|filesizeformat}}
+											<i class="icon-arrow-up" title="Out"> </i>{{vm.netout|filesizeformat}
+										</td>
+										
+										<td style="text-align: center;">
+											
+
+											{% if vm.status == 'running' %}
+												<a href="{% url 'proxmoxs.views.vms_stop' elem.0.pk vm.vmid %}" class="btn btn-mini btn btn-warning" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Stop" %}</a>
+											{% endif %}
+
+											{% if vm.status == 'stopped' %}
+												<a href="{% url 'proxmoxs.views.vms_delete' elem.0.pk vm.vmid %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');" style="margin-bottom: 2px;"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+
+												<a href="{% url 'proxmoxs.views.vms_start' elem.0.pk vm.vmid %}" class="btn btn-mini btn btn-primary" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Start" %}</a>
+											{% endif %}
+
+											<a href="{% url 'proxmoxs.views.vms_update' elem.0.pk vm.vmid %}" class="btn btn-mini btn"  style="margin-top: 2px;">{% trans "Update config" %}</a>
+											
+										</td>
+									</tr>
+								{% endfor %}
+
+								{% for unlinked in elem.2 %}
+
+									<tr>
+										<td>
+											{% if forloop.first and not elem.1 %}
+												<a href="{% url 'servers.views.servers_show' elem.0.pk %}">{{elem.0.name}}</a>
+											{% endif %}
+										</td>
+										<td>
+											<a href="{% url 'servers.views.servers_show' unlinked.pk %}">
+												{{unlinked.name}}
+											</a>
+											<br /><span class="label label-warning">{% trans "Cannot find VM !" %}</span>
+										</td>
+										<td></td>
+										<td>{{vm.ip}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align: center;">
+											
+											<a href="{% url 'proxmoxs.views.vms_create' unlinked.pk %}" class="btn btn-mini btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Create" %}</a>
+											
+										</td>
+									</tr>
+
+								{% endfor %}
+							{% endfor %}
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Wizards{% endblock %}
+
+{% block content %}
+
+	<h3>Wizards - {{wiz.get_name}}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-wizard').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Execution of tasks" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+                	<table class="table">
+
+                		{% for t in tasks %}
+                			<tr>
+                				<td>{{t}}</td>
+                				<td id="task-{{forloop.counter}}">?{{forloop.counter}}</td>
+                			</tr>
+                		{% endfor %}
+
+                	</table>
+
+                	<div id="done" class="alert alert-success" style="display: none;">{% trans "Done !" %}</div>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function check_status() {
+			$.ajax('{% url 'wizard.views.get_task_status' status_id %}').done(function (data) {
+
+				data_split = data.split(',');
+
+				c_task_id = data_split[0];
+				done = data_split[1] == 'True';
+
+				for (var i = 1; i <= {{nb_tasks}}; i++) {
+					if (i < c_task_id) {
+						$('#task-' + i).html('<span class="label label-success">{% trans "Done" %}</span>');
+					} else if (i > c_task_id) {
+						$('#task-' + i).html('<span class="label">{% trans "Waiting" %}</span>');
+					} else {
+						$('#task-' + i).html('<span class="label label-info">{% trans "In progress" %}</span>');
+					}
+				}
+
+				if (done) {
+					$('#task-' + c_task_id).html('<span class="label label-important">{% trans "Failled" %}</span>');
+					$('#done').show();
+				} else {
+					setTimeout("check_status();", 1000);
+				}
+
+			}).error(function () { setTimeout("check_status();", 5000); });
+		}
+
+		check_status();
+
+	</script>
+
+
+{% endblock %}
+

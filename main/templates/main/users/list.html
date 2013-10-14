@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}User{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "User management" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-users').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "List of users" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-to-sort">
+						<thead>
+							<tr>
+								<th>{% trans "Username" %}</th>
+								<th>{% trans "Name" %}</th>
+								<th>{% trans "Email" %}</th>
+								<th>{% trans "Admin ?" %}</th>
+								<th>{% trans "Actif ?" %}</th>
+								<th style="width: 150px;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for elem in liste %}
+								<tr>
+									<td><a href="{% url 'main.views.users_show' elem.pk %}">{{elem.username}}</a></td>
+									<td>{{elem.first_name}} {{elem.last_name}}</td>
+									<td>{{elem.email}}</td>
+									<td>{{elem.is_staff|yesno}}</td>
+									<td>{{elem.is_active|yesno}}</td>
+									<td>
+										<a href="{% url 'main.views.users_delete' elem.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+										<a href="{% url 'main.views.users_edit' elem.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+									</td>
+								</tr>
+							{% endfor %}
+							
+						</tbody>
+					</table>
+
+
+					<div class="row-fluid box-section" style="text-align: right;">
+						<a href="{% url 'main.views.users_edit' '0' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

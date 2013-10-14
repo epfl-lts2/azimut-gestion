@@ -1,0 +1,77 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Hostname forwarding" %}</div>
+	</div>
+	<div class="block-content collapse in">
+		
+			<table class="table table-condensed table-hover">
+				<tr><th>{% trans "From" %}</th><th>{% trans "To" %}</th><th></th></tr>
+				{% for host in object.all_hosts %}
+					<tr>
+
+						<td>
+							{{host.domain}}:{{host.port_from}}
+						</td>
+
+
+						{% if object.is_vm %}
+							<td>
+								{{host.port_to}}
+							</td>
+						{% else %}
+							<td>
+								{{host.server_to.internal_ip}}:{{host.port_to}} ({{host.server_to}})
+							</td>
+						{% endif %}
+
+						<td>
+							{% if user.is_staff %}
+								<a href="{% url 'hostnameforwarding.views.delete_from_server' object.pk host.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+			{% if user.is_staff %}
+				<span style="float: right;">
+					<form action="{% url 'hostnameforwarding.views.save_from_server' object.pk %}" method="POST">
+						{% csrf_token %}
+
+						<input name="domain" placeholder="Domain" type="text" class="input-small">
+						<input name="from" placeholder="Port from" type="text" class="input-small" value="80">
+
+						{% if object.is_vm %}
+							<input name="server_from" type="hidden" value="{{object.vm_host.pk}}">
+							<input name="server_to" type="hidden" value="{{object.pk}}">
+						{% else %}
+							<input name="server_from" type="hidden" value="{{object.pk}}">
+
+							<select name="server_to" id="server_to2" style="margin-top: -10px;">
+								{% for s in object.server_set.all %}
+									<option value="{{s.pk}}">{{s}}</option>
+								{% endfor %}
+							</select>
+
+						{% endif %}
+
+						
+						<input name="to" placeholder="Port to" type="text" class="input-small" value="80">
+
+						<button type="submit" class="btn btn-success" style="margin-top: -10px;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</button>
+
+					</form>
+				</span>
+			{% endif %}	
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#server_to2").select2({placeholder: "{% trans 'VM' %}"});
+	
+</script>

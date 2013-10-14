@@ -1,0 +1,78 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Groups allowed to connect" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			{% for group in object.groupwithaccess_set.all %}
+				<tr>
+					<td>
+						<a href="{% url 'groups.views.groups_show' group.pk %}">{{group}}</a>
+					</td>
+
+					<td>
+						<i>{% trans 'All users' %}</i>
+					</td>
+
+					<td>
+						{% if user.is_staff %}
+							<a href="{% url 'servers.views.servers_groupsaccess_delete' object.pk group.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+
+			{% for user_ in object.serveruser_set.all %}
+				{% for group in user_.group_set.all %}
+					<tr>
+						<td>
+							<a href="{% url 'groups.views.groups_show' group.pk %}">{{group}}</a>
+						</td>
+
+						<td>
+							{{user_.name}}
+						</td>
+
+						<td>
+							{% if user.is_staff %}
+								<a href="{% url 'servers.views.servers_groupsaccess_user_delete' object.pk group.pk user_.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			{% endfor %}
+		</table>
+
+		{% if user.is_staff %}
+			<span style="float: right;">
+				<select id="group_select2" style="margin-right: 10px; width: 220px;">
+					<option></option>
+					{% for g in groups %}
+						<option value="{{g.pk}}">{{g}}</option>
+					{% endfor %}
+				</select>
+
+				<select id="user_select" style="margin-right: 10px; width: 220px;">
+					<option></option>
+					<option value="0">{% trans 'All users' %}</option>
+					{% for user_ in object.serveruser_set.all %}
+						<option value="{{user_.pk}}">{{user_.name}}</option>
+					{% endfor %}
+				</select>
+
+				<a href="{% url 'servers.views.servers_groupsaccess_add' object.pk %}" onclick="if ($('#group_select2').val() == '') { alert('{% trans 'Please select a group !' %}'); return false; } else if ($('#user_select').val() == '') { alert('{% trans 'Please select an user !' %}'); return false; } else { $(this).attr('href', $(this).attr('href') + '?groupPk=' + $('#group_select2').val()  + '&userPk=' + $('#user_select').val()); return true; } " class="btn btn-success" style="float: right;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+			</span>
+		{% endif %}
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#group_select2").select2({placeholder: "{% trans 'Select a group to add' %}"});
+	$("#user_select").select2({placeholder: "{% trans 'Select an user' %}"});
+</script>

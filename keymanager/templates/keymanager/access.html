@@ -1,0 +1,19 @@
+{% for g in groups.all %}
+	<span class="agroup" title="jeu">
+		<i class="icon-th-list"></i> <a href="{% url 'groups.views.groups_show' g.pk %}">{{g.name}}</a>
+
+		<span>
+			{% for u in g.users.all %}
+				<i class="icon-user icon-white"></i> <a href="{% url 'main.views.users_show' u.pk %}">{{u.username}}</a>
+			{% endfor %}
+
+			{% for s in g.servers.all %}
+				<i class="icon-hdd icon-white"></i> <a href="{% url 'servers.views.servers_show' s.pk %}">{{s.name}}</a>
+			{% endfor %}
+
+			{% for s in g.servers_keys.all %}
+				<i class="icon-certificate icon-white"></i> <a href="{% url 'servers.views.servers_show' s.server.pk %}">{{s}}</a>
+			{% endfor %}
+		</span>
+	</span>
+{% endfor %}

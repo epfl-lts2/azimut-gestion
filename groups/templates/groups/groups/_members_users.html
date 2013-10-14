@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Members (users)" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			{% for u in object.users.all %}
+				<tr><td><a href="{% url 'main.views.users_show' u.pk %}">{{u}}</a></td></tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>

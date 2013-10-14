@@ -1,0 +1,46 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Groups membership" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			{% for group in object.group_set.all %}
+				<tr>
+					<td>
+						<a href="{% url 'groups.views.groups_show' group.pk %}">{{group}}</a>
+					</td>
+
+					<td>
+						{% if user.is_staff %}
+							<a href="{% url 'main.views.users_groups_delete' object.pk group.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+
+		{% if user.is_staff %}
+		<span style="float: right;">
+			<select id="group_select" style="margin-right: 10px; width: 220px;">
+				<option></option>
+				{% for g in groups %}
+					<option value="{{g.pk}}">{{g}}</option>
+				{% endfor %}
+			</select>
+			<a href="{% url 'main.views.users_groups_add' object.pk %}" onclick="if ($('#group_select').val() == '') { alert('{% trans 'Please select a group !' %}'); return false; } else { $(this).attr('href', $(this).attr('href') + '?groupPk=' + $('#group_select').val()); return true; } " class="btn btn-success" style="float: right;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+		</span>
+		{% endif %}
+		
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#group_select").select2({placeholder: "{% trans 'Select a group to add' %}"});
+
+</script>

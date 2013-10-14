@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}User{% endblock %}
+
+{% block content %}
+
+	<h3>{{user.username}}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-users').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Details of an user" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+                	<form class="form-horizontal">
+						<fieldset>
+							<legend>{% trans "Details" %}</legend>
+							
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Username" %}</label>
+								<div class="controls controls-txt">{{object.username}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "First name" %}</label>
+								<div class="controls controls-txt">{{object.first_name}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Last name" %}</label>
+								<div class="controls controls-txt">{{object.last_name}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Email" %}</label>
+								<div class="controls controls-txt">{{object.email}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Last login" %}</label>
+								<div class="controls controls-txt">{{object.last_login|date}} {{object.last_login|time}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Is admin ?" %}</label>
+								<div class="controls controls-txt">{{object.is_staff|yesno}}</div>
+							</div>
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Is active ?" %}</label>
+								<div class="controls controls-txt">{{object.is_active|yesno}}</div>
+							</div>
+
+						</fieldset>
+					</form>
+
+	
+
+					<div class="row-fluid box-section" style="text-align: right;">
+		                <a href="{% url 'main.views.users_list' %}" class="btn"><i class="icon-list icon-black"></i> {% trans "Back to the list" %}</a>
+		                <a href="{% url 'main.views.users_setpassword' object.pk %}" class="btn"><i class="icon-lock icon-black"></i> {% trans "Set password" %}</a>
+		                <a href="{% url 'main.views.users_edit' object.pk %}" class="btn btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+		            </div>
+
+
+
+				</div>
+			</div>
+		</div>
+
+		<div class="span6" style="margin-left: 0px;">
+			{% include "main/users/_ssh_keys.html" %}
+		</div>
+
+
+		<div class="span6">
+			{% include "main/users/_groups.html" %}
+		</div>
+
+	</div>
+
+{% endblock %}

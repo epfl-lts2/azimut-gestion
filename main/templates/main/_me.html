@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "About you" %}</div>
+	</div>
+	<div class="block-content collapse in">
+		<b>{% trans "Name" %}</b>: {{user.first_name}} {{user.last_name}}<br />
+		<b>{{user.sshkey_set.count}}</b> {% trans "ssh key(s)" %}<br />
+
+		<a href="{% url 'main.views.me' %}" class="btn btn-mini" style="float: right;">{% trans "More details" %}</a>
+
+	</div>
+</div>

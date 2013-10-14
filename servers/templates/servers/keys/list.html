@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}Ssh keys{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "SSH Keys management - Servers" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-sshkeyss').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "List of keys" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-to-sort">
+						<thead>
+							<tr>
+								<th>{% trans "Id" %}</th>
+								<th>{% trans "Server" %}</th>
+								<th>{% trans "User" %}</th>
+								<th style="width: 150px;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for elem in liste %}
+								<tr>
+									<td><a href="{% url 'servers.views.keys_show' elem.pk %}">{{elem.get_comment}}</a></td>
+									<td>{{elem.server.name}}</td>
+									<td>{{elem.user}}</td>
+									<td>
+										<a href="{% url 'servers.views.keys_delete' elem.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+										<a href="{% url 'servers.views.keys_edit' elem.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+									</td>
+								</tr>
+							{% endfor %}
+							
+						</tbody>
+					</table>
+
+
+					<div class="row-fluid box-section" style="text-align: right;">
+						<a href="{% url 'servers.views.keys_edit' '0' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

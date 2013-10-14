@@ -1,0 +1,53 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Backups on the server" %}</div>
+	</div>
+	<div class="block-content collapse in">
+		
+		<table class="table table-condensed table-hover">
+				<tr><th>{% trans "Name" %}</th><th>{% trans "Source server" %}<th>{% trans "Last backup" %}</th><th>Size</th></tr>
+				{% for bkp in object.backups_on_the_server.all %}
+					<tr>
+						<td><a href="{% url 'backups.views.backups_show' bkp.pk %}">{{bkp.name}}</a></td>
+						<td>{{bkp.server_from}}</td>
+						<td>
+							{% if bkp.get_last_run %}
+
+								{% if bkp.get_last_run.end_date %}
+									{% if bkp.get_last_run.not_too_old %}
+										<span class="label label-success">
+									{% else %}
+									 	<span class="label label-important">
+									{% endif %}
+									 		{{bkp.get_last_run.end_date|timesince}}
+
+										</span>
+
+								{% else %}
+									 <span class="label label-warning"> {% trans "In progress..." %}</span>
+								{% endif %}
+
+							{% else %}
+								<span class="label label-warning">{% trans "Never" %}</span>
+							{% endif %}
+						</td>
+						<td>
+
+							{% if bkp.get_last_run.size > 0 %}
+								<span class="label label-success">
+							{% else %}
+							 	<span class="label label-important">
+							{% endif %}
+
+									{{bkp.get_last_run.size|filesizeformat}}
+								</span>
+						</td>
+						
+					</tr>
+				{% endfor %}
+			</table>
+	</div>
+</div>

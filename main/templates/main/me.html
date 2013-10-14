@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}User{% endblock %}
+
+{% block content %}
+
+	<h3>{{user.username}}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-users').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+
+	 	<div class="span12">
+	        <div class="block">
+	            <div class="navbar navbar-inner block-header">
+	                <div class="muted pull-left">{% trans "About you" %}</div>
+	            </div>
+	            <div class="block-content collapse in">
+	                <div class="span12">
+
+	                	<form class="form-horizontal">
+							<fieldset>
+								<legend>{% trans "Details" %}</legend>
+								
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Username" %}</label>
+									<div class="controls controls-txt">{{user.username}}</div>
+								</div>
+
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "First name" %}</label>
+									<div class="controls controls-txt">{{user.first_name}}</div>
+								</div>
+
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Last name" %}</label>
+									<div class="controls controls-txt">{{user.last_name}}</div>
+								</div>
+
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Email" %}</label>
+									<div class="controls controls-txt">{{user.email}}</div>
+								</div>
+
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Is admin ?" %}</label>
+									<div class="controls controls-txt">{{user.is_staff|yesno}}</div>
+								</div>
+
+							</fieldset>
+						</form>
+
+		
+
+						<div class="row-fluid box-section" style="text-align: right;">
+			                <a href="{% url 'main.views.me_password' %}" class="btn"><i class="icon-lock icon-black"></i> {% trans "Change my password" %}</a>
+			                <a href="{% url 'main.views.me_edit' %}" class="btn btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit my proflie" %}</a>
+			            </div>
+
+
+
+					</div>
+
+					
+				</div>
+			</div>
+		</div>
+
+		<div class="span6">
+			<div class="block">
+
+				<div class="navbar navbar-inner block-header">
+					<div class="muted pull-left">{% trans "SSH Keys" %}</div>
+				</div>
+				<div class="block-content collapse in">
+
+					<ul>
+						{% for key in user.sshkey_set.all %}
+							<li>{{key.get_comment}} <a href="{% url 'main.views.users_keys_delete' user.pk key.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a></li>
+						{% endfor %}
+					</ul>
+
+					<a href="{% url 'main.views.users_keys_add' '' %}" class="btn btn-success" style="float: right;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

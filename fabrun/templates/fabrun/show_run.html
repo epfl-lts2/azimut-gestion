@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Running Fabric scripts{% endblock %}
+
+{% block content %}
+
+	<h3>Output of fabric script</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-fabrun').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{{task.server}}: {{task.command}}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span6">
+                	<h4>Stdout</h4>
+                	<pre>{{task.stdout}}</pre>
+                </div>
+
+                <div class="span6">
+                	<h4>Stderr</h4>
+                	<pre>{{task.stderr}}</pre>
+                </div>
+
+
+                <div class="row-fluid box-section" style="text-align: right;">
+	                <a href="{% url 'fabrun.views.home' %}" class="btn"><i class="icon-list icon-black"></i> {% trans "Back to the list" %}</a>
+	            </div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+

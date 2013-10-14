@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Ssh keys{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "New ssh key" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-sshkeyss').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Add a new SSH key for server" %} {{form.instance.server.name}}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<form action="" method="POST" class="form-horizontal">
+						{% csrf_token %}
+
+						{{form|as_bootstrap }}
+						<div class="row-fluid box-section" style="text-align: right;">
+							<a href="{% url 'servers.views.servers_show' form.instance.server.pk %}" class="btn">{% trans "Cancel" %}</a>
+			                <input type="submit" class="btn btn-primary" value="{% trans "Save" %}">
+			            </div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

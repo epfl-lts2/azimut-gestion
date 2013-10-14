@@ -1,0 +1,91 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Port forwarding" %}</div>
+	</div>
+	<div class="block-content collapse in">
+		
+			<table class="table table-condensed table-hover">
+				<tr><th>{% trans "From" %}</th><th>{% trans "To" %}</th><th>{% trans "Protocol" %}</th><th></th></tr>
+				{% for port in object.all_ports %}
+					<tr>
+
+						{% if object.is_vm %}
+						<td>
+							{{port.server_host.external_ip}}:{{port.port_from}}
+						</td>
+
+						<td>
+							{{port.port_to}}
+						</td>
+						{% else %}
+
+							<td>
+								{{port.port_from}}
+							</td>
+
+							<td>
+								{{port.server_to.internal_ip}}:{{port.port_to}} ({{port.server_to}})
+							</td>
+
+						{% endif %}
+
+						<td>
+							{{port.get_protocol_display}}
+						</td>
+
+						<td>
+							{% if user.is_staff %}
+								<a href="{% url 'portforwarding.views.delete_from_server' object.pk port.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+			{% if user.is_staff %}
+				<span style="float: right;">
+					<form action="{% url 'portforwarding.views.save_from_server' object.pk %}" method="POST">
+						{% csrf_token %}
+
+						<input name="from" placeholder="Port from" type="text" class="input-small">
+
+						{% if object.is_vm %}
+							<input name="server_from" type="hidden" value="{{object.vm_host.pk}}">
+							<input name="server_to" type="hidden" value="{{object.pk}}">
+						{% else %}
+							<input name="server_from" type="hidden" value="{{object.pk}}">
+
+							<select name="server_to" id="server_to" style="margin-top: -10px;">
+								{% for s in object.server_set.all %}
+									<option value="{{s.pk}}">{{s}}</option>
+								{% endfor %}
+							</select>
+
+						{% endif %}
+
+						
+						<input name="to" placeholder="Port to" type="text" class="input-small">
+
+						<select name="protocol" id="protocol" style="margin-top: -10px;">
+							<option value="tcp">TCP</option>
+							<option value="udp">UDP</option>
+						</select>
+
+						<button type="submit" class="btn btn-success" style="margin-top: -10px;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</button>
+
+					</form>
+				</span>
+			{% endif %}	
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#protocol").select2({placeholder: "{% trans 'Protocol' %}"});
+	$("#server_to").select2({placeholder: "{% trans 'VM' %}"});
+
+</script>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "Welcome !" %}</h3>
+
+	<div class="row-fluid">
+		<div class="span6">
+			{% include "main/_me.html" %}
+		</div>
+
+		<div class="span6">
+			{% include "main/_backups.html" %}
+		</div>
+	</div>
+
+
+	<script type="text/javascript">$(function() { $('#menu-dashboard').addClass('active'); });</script>
+
+{% endblock %}

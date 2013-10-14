@@ -1,0 +1,31 @@
+{% load i18n %}
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "SSH Keys" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			{% for key in object.sshkey_set.all %}
+				<tr>
+					<td>
+						{{key.get_comment}}
+					</td>
+
+					<td>
+						{% if user.is_staff %}
+							<a href="{% url 'main.views.users_keys_delete' object.pk key.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+
+		{% if user.is_staff %}
+			<a href="{% url 'main.views.users_keys_add' object.pk %}" class="btn btn-success" style="float: right;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+		{% endif %}
+		
+
+	</div>
+</div>

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Server{% endblock %}
+
+{% block content %}
+
+	<h3>{{server.name}}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-servers').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Details of a server" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+                	<form class="form-horizontal">
+						<fieldset>
+							<legend>{% trans "Details" %}</legend>
+							
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Name" %}</label>
+								<div class="controls controls-txt">{{object.name}}</div>
+							</div>
+
+							{% if object.keymanger_name %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Key manager name" %}</label>
+									<div class="controls controls-txt">{{object.keymanger_name}}</div>
+								</div>
+							{% endif %}
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Is VM ?" %}</label>
+								<div class="controls controls-txt">{{object.is_vm|yesno}}</div>
+							</div>
+
+							
+
+							{% if object.vm_host %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "VM Host" %}</label>
+									<div class="controls controls-txt">{{object.vm_host}}</div>
+								</div>
+							{% endif %}
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Is proxmox ?" %}</label>
+								<div class="controls controls-txt">{{object.is_proxmox|yesno}}</div>
+							</div>
+
+							{% if object.proxmox_node_name %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Proxmox node name" %}</label>
+									<div class="controls controls-txt">{{object.proxmox_node_name}}</div>
+								</div>
+							{% endif %}
+
+
+							{% if object.external_ip %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "External IP" %}</label>
+									<div class="controls controls-txt">{{object.external_ip}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.internal_ip %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Internal IP" %}</label>
+									<div class="controls controls-txt">{{object.internal_ip}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.ngnix_server %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Ngnix server" %}</label>
+									<div class="controls controls-txt">{{object.ngnix_server}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.ssh_connection_string_from_gestion %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "SSH connection string for gestion" %}</label>
+									<div class="controls controls-txt">{{object.ssh_connection_string_from_gestion}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.ssh_connection_string_from_backup %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "SSH connection string for backups" %}</label>
+									<div class="controls controls-txt">{{object.ssh_connection_string_from_backup}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.external_hostname_for_vms_creation %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "External hostname for VMs creation" %}</label>
+									<div class="controls controls-txt">{{object.external_hostname_for_vms_creation}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.external_interface %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "External interface" %}</label>
+									<div class="controls controls-txt">{{object.external_interface}}</div>
+								</div>
+							{% endif %}
+
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Samba management ?" %}</label>
+								<div class="controls controls-txt">{{object.samba_management|yesno}}</div>
+							</div>
+
+							{% if object.samba_base_folder %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Samba base folder" %}</label>
+									<div class="controls controls-txt">{{object.samba_base_folder}}</div>
+								</div>
+							{% endif %}
+
+							{% if object.serveruser_set.all %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Users" %}</label>
+									<div class="controls controls-txt">
+										<ul>
+											{% for u in object.serveruser_set.all %}
+												<li>{{u.name}}</li>
+											{% endfor %}
+										</ul>
+									</div>
+								</div>
+							{% endif %}
+
+
+						</fieldset>
+					</form>
+
+	
+
+					<div class="row-fluid box-section" style="text-align: right;">
+		                <a href="{% url 'servers.views.servers_list' %}" class="btn"><i class="icon-list icon-black"></i> {% trans "Back to the list" %}</a>
+		                <a href="{% url 'servers.views.servers_edit' object.pk %}" class="btn btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+		            </div>
+
+
+
+				</div>
+			</div>
+		</div>
+
+		<div class="span6" style="margin-left: 0px;">
+			{% include "servers/servers/_ssh_keys.html" %}
+		</div>
+
+		<div class="span6">
+			{% include "servers/servers/_groups_membership.html" %}
+		</div>
+
+
+		<hr style="clear: both; visibility: hidden;" />
+
+		<div class="span6" style="margin-left: 0px;">
+			{% include "servers/servers/_groups_allowed.html" %}
+		</div>
+
+
+		<div class="span6">
+			{% include "servers/servers/_port_forwarding.html" %}
+		</div>
+
+
+		<hr style="clear: both; visibility: hidden;" />
+
+		<div class="span6" style="margin-left: 0px;">
+			{% include "servers/servers/_hostname_forwarding.html" %}
+		</div>
+
+		<div class="span6">
+			{% include "servers/servers/_runs.html" %}
+		</div>
+
+		<hr style="clear: both; visibility: hidden;" />
+
+		<div class="span6" style="margin-left: 0px;">
+			{% include "servers/servers/_backups.html" %}
+		</div>
+
+		<div class="span6">
+			{% include "servers/servers/_backups_here.html" %}
+		</div>
+
+
+
+	</div>
+
+	
+
+{% endblock %}
+
+
