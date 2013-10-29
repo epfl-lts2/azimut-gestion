@@ -140,9 +140,10 @@ class Step2Form(forms.Form):
             raise forms.ValidationError("The IP is already used on the server")
 
         #Check if backup is unique
-        backup_server = Server.objects.get(name=settings.BACKUP_SERVER)
-        if 'backup_destination' in self.cleaned_data and Backup.objects.filter(server_to=backup_server, folder_to=self.cleaned_data['backup_destination']).count():
-            raise forms.ValidationError("Destionation folder already used on the backup server")
+        if self.cleaned_data['setup_backups']:
+            backup_server = Server.objects.get(name=settings.BACKUP_SERVER)
+            if 'backup_destination' in self.cleaned_data and Backup.objects.filter(server_to=backup_server, folder_to=self.cleaned_data['backup_destination']).count():
+                raise forms.ValidationError("Destionation folder already used on the backup server")
 
         #Check if name is unique
         if 'name' in self.cleaned_data and Server.objects.filter(name=self.cleaned_data['name']).count():

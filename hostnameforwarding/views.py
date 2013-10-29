@@ -148,9 +148,16 @@ server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
 
-    location / {
-        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
-        access_log off;
+    location / {"""
+
+    if host.port_to == 80:
+        script += """        proxy_pass http://""" + host.server_to.internal_ip + """:/;
+"""
+    else:
+        script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
+"""
+
+    script += """        access_log off;
     }
 }
 """

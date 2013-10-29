@@ -5,3 +5,5 @@ django-bootstrap-form
 django-celery
 celery
 pyproxmox
+fabric
+django-bootstrap-toolkit
