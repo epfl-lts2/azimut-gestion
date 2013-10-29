@@ -150,16 +150,16 @@ server {
 
     location / {"""
 
-    if host.port_to == 80:
-        script += """        proxy_pass http://""" + host.server_to.internal_ip + """:/;
-"""
-    else:
-        script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
-"""
+        if host.port_to == 80:
+            script += """        proxy_pass http://""" + host.server_to.internal_ip + """/;
+    """
+        else:
+            script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
+    """
 
-    script += """        access_log off;
+        script += """        access_log off;
+        }
     }
-}
-"""
+    """
 
     return HttpResponse(script)
