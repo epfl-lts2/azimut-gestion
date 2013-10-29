@@ -1,0 +1,7 @@
+django
+requests
+south
+django-bootstrap-form
+django-celery
+celery
+pyproxmox
