@@ -16,6 +16,7 @@ The tool is written in python and use :
 * select2
 * [Bootstrap-Admin-Theme](https://github.com/VinceG/Bootstrap-Admin-Theme)
 * ZeroClipBoard
+* south
 
 Main features are:
 
