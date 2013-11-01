@@ -142,8 +142,8 @@ def get_script(request, pk):
 
 case "$1" in
 start) echo "Starting iptables NAT for openvz"
-    /sbin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
-    /sbin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
+    /sbin/iptables -t nat -D POSTROUTING -s """ + settings.PROXMOX_IP_BASE + """.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
+    /sbin/iptables -t nat -A POSTROUTING -s """ + settings.PROXMOX_IP_BASE + """.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
 """
     for pf in obj.portstoforward.all():
         script += """    /sbin/iptables -t nat -A PREROUTING -i """ + obj.external_interface + """ -p """ + pf.protocol + """ --dport """ + str(pf.port_from) + """ -j DNAT --to """ + pf.server_to.internal_ip + """:""" + str(pf.port_to) + """
@@ -152,7 +152,7 @@ start) echo "Starting iptables NAT for openvz"
     script += """
     ;;
 stop) echo "Stopping iptables NAT for openvz"
-    /sbin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
+    /sbin/iptables -t nat -D POSTROUTING -s """ + settings.PROXMOX_IP_BASE + """.0/24 -o """ + obj.external_interface + """ -j SNAT --to """ + obj.external_ip + """
     /sbin/iptables -t nat --flush PREROUTING
 
     ;;
