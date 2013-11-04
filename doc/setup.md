@@ -76,7 +76,7 @@ If needed, you can change defaults groups created during installations. All user
 
 It's important to do backups ! You should have an external server, able to connect to the proxmox servers and his VMs to perform backup.
 
-The server should have `rsync` tool installed.
+The server should have `rsync` and `rsnapshot` tool installed.
 
 Add the machine in the _Servers_ menu, with corrects parameters. You have too generate an ssh-key (`ssh-keygen`) for the root user. Attach it to the servers, and add this key (or the server) to the _Server gestion_  group. Don't forget to also allow the _Server gestion_ to connect to the server.
 
@@ -86,6 +86,34 @@ Finally, you can set the server name and the base folder to do backups in your `
 
 *Be careful when you set a backup destination !* Using / will erase your backup server, always your empty folders !
 
+You must add cron jobs on the gestion machine to execute tasks. Add this:
+
+```00 */4 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron hourly
+50 23 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron daily
+40 23 1,8,15,22 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron weekly
+30 23 1 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron monthly```
+
+
 ## Update the code
 
 It's possible to use the fabric script to update the code. Just use `fab gestion.update_code` to do it. Don't forget to check if your settings files are up-to-date ! (`/var/www/git-repo/azimut-gestion/app/settingsLocal.py` and `/var/www/git-repo/azimut-deploy/config.py`).
+
+## SSL with ngnix
+
+When the port 443 is used for hostforwarding and the config option `NGNIX_SSL_PEM` and `NGNIX_SSL_KEY` is set, ngnix config will be set to use SSL using the two files provided in config.
+
+You may generate certificates like this:
+
+* Login on the ngnix machine
+* `mkdir -p /etc/ssl/ngnix`
+* `cd /etc/ssl/ngnix`
+* `openssl req -new -x509 -days 3650 -nodes -out /etc/ssl/ngnix/srv.pem -keyout /etc/ssl/ngnix/srv.key`
+
+Update `settingsLocal.py`:
+
+`NGNIX_SSL_PEM = '/etc/ssl/ngnix/srv.pem'`
+`NGNIX_SSL_KEY = '/etc/ssl/ngnix/srv.key'`
+
+Add a portforwarding entry to your ngnix server, from port 443 to port 443.
+
+You can now add hostnameforwarding entry from the port 443 to your server (using port 80 as destination !).

@@ -316,6 +316,9 @@ class CreateVm(_Wizard):
 
         if self.step_data[1]['setup_hostforwarding']:
 
+            if settings.NGNIX_SSL_KEY != '':
+                Hostnameforwarded(server_host=srv.vm_host, server_to=srv, domain=self.step_data[1]['name_for_hostname_forwarding'], port_from=443).save()
+
             Hostnameforwarded(server_host=srv.vm_host, server_to=srv, domain=self.step_data[1]['name_for_hostname_forwarding']).save()
             update_hostnameforwarding()
 

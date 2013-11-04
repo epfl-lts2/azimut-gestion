@@ -152,6 +152,9 @@ DATETIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT
 
 SAMBA_USER_PREFIX = 'smb-'
 
+NGNIX_SSL_PEM = ''
+NGNIX_SSL_KEY = ''
+
 try:
     from settingsLocal import *
 except ImportError:

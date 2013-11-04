@@ -19,7 +19,7 @@ The `gestion` server or proxmox container is the core of the interface. He takes
 
 ### Backups
 
-To execute backups, `rsync` is used to create a copy of the server. The `gestion` server will connect to the backup server to execute rsync tasks, connecting themselves to different servers to backups. Therefor, the backup server must be able to connect using ssh to every machine who has to be backuped.
+To execute backups, `rsnapshot` and `rsync` is used to create a copy of the server, with differents snapshot (copied each 4 hours, with history of 6 copy, last 7 days each day, last 4 week each week and last 3 months each month). The `gestion` server will connect to the backup server to execute rsync tasks, connecting themselves to different servers to backups. Therefor, the backup server must be able to connect using ssh to every machine who has to be backuped.
 
 ### Key management
 

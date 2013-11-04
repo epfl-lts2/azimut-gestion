@@ -148,7 +148,8 @@ server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
 
-    location / {"""
+    location / {
+    """
 
         if host.port_to == 80:
             script += """        proxy_pass http://""" + host.server_to.internal_ip + """/;
@@ -158,8 +159,19 @@ server {
     """
 
         script += """        access_log off;
-        }
     }
     """
+
+        if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
+            script += """        ssl on;
+    """
+            script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
+    """
+            script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
+    """
+
+        script += """
+    }
+        """
 
     return HttpResponse(script)

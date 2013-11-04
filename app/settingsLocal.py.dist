@@ -44,3 +44,6 @@ RUN_KM_FABRIC_SCRIPT = 'server.execute_key_manger'
 SAMBA_SECRET_KEY = ''
 
 BROKER_URL = ''
+
+NGNIX_SSL_PEM = ''
+NGNIX_SSL_KEY = ''

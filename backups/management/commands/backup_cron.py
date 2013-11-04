@@ -8,4 +8,4 @@ class Command(BaseCommand):
     help = 'Run all actives backups'
 
     def handle(self, *args, **options):
-        run_active_backups.delay()
+        run_active_backups.delay(args[0])
