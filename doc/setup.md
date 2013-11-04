@@ -88,10 +88,10 @@ Finally, you can set the server name and the base folder to do backups in your `
 
 You must add cron jobs on the gestion machine to execute tasks. Add this:
 
-```00 */4 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron hourly
-50 23 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron daily
-40 23 1,8,15,22 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron weekly
-30 23 1 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron monthly```
+`00 */4 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron hourly`
+`50 23 * * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron daily`
+`40 23 1,8,15,22 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron weekly`
+`30 23 1 * * cd /var/www/git-repo/azimut-gestion && python manage.py backup_cron monthly`
 
 
 ## Update the code
