@@ -19,7 +19,7 @@ class UserOwnForm(ModelForm):
 class UserSshKey(ModelForm):
     class Meta:
         model = SshKey
-        exclude = ('user')
+        exclude = ('user',)
 
 
 class SshKeyForm(ModelForm):
