@@ -144,6 +144,8 @@ retain\tdaily\t7
 retain\tweekly\t7
 retain\tmonthly\t3
 
+link_dest\t1
+cmd_cp\t/bin/cp
 
 ssh_args\t""" + ssh_args + """
 rsync_long_args\t--delete --numeric-ids --relative --delete-excluded --stats""" + excludes + """
