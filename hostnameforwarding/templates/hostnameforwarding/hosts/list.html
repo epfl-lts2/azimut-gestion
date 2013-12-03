@@ -27,6 +27,7 @@
 								<th>{% trans "VM" %}</th>
 								<th>{% trans "Port from" %}</th>
 								<th>{% trans "Port to" %}</th>
+								<th>{% trans "Force HTTPs ?" %}</th>
 								<th style="width: 150px;"></th>
 							</tr>
 						</thead>
@@ -38,6 +39,7 @@
 									<td>{{elem.server_to}} ({{elem.server_to.internal_ip}})</td>
 									<td>{{elem.port_from}}</td>
 									<td>{{elem.port_to}}</td>
+									<td>{{elem.force_https|yesno}}</td>
 									<td>
 										<a href="{% url 'hostnameforwarding.views.hosts_delete' elem.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
 										<a href="{% url 'hostnameforwarding.views.hosts_edit' elem.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>

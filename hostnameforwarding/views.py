@@ -143,24 +143,28 @@ server {
 
 }
 """
+
     for host in obj.hoststoforward.all():
         script += """server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
 
-    location / {
     """
 
-        if host.port_to == 80:
-            script += """        proxy_pass http://""" + host.server_to.internal_ip + """/;
-    """
-        else:
-            script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
-    """
+        if not host.force_https:
+            script += """location / {
+            """
 
-        script += """        access_log off;
-    }
-    """
+            if host.port_to == 80:
+                script += """        proxy_pass http://""" + host.server_to.internal_ip + """/;
+        """
+            else:
+                script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
+        """
+
+            script += """        access_log off;
+        }
+        """
 
         if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
             script += """        ssl on;
@@ -169,6 +173,12 @@ server {
     """
             script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
     """
+
+
+        if host.force_https:
+                script += """      return 301 https://$server_name$request_uri;
+            """
+
 
         script += """
     }

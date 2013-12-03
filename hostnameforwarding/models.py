@@ -11,6 +11,8 @@ class Hostnameforwarded(models.Model):
     port_from = models.IntegerField(default=80)
     port_to = models.IntegerField(default=80)
 
+    force_https = models.BooleanField(default=False)
+
     def clean(self):
         from django.core.exceptions import ValidationError
         
