@@ -106,6 +106,15 @@
 								</div>
 							{% endif %}
 
+							{% if object.hostname_for_vms_creation %}
+								<div class="control-group control-group-txt">
+									<label class="control-label control-label-txt">{% trans "Hostname for VMs creation" %}</label>
+									<div class="controls controls-txt">{{object.hostname_for_vms_creation}}</div>
+								</div>
+							{% endif %}
+
+							
+
 							{% if object.external_interface %}
 								<div class="control-group control-group-txt">
 									<label class="control-label control-label-txt">{% trans "External interface" %}</label>
