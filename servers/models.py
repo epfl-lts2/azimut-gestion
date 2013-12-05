@@ -26,7 +26,7 @@ class Server(models.Model):
     external_hostname_for_vms_creation = models.CharField(max_length=255, blank=True, null=True)
     hostname_for_vms_creation = models.CharField(max_length=255, blank=True, null=True, default='')
 
-    samba_management = models.BooleanField()
+    samba_management = models.BooleanField(default=False)
     samba_base_folder = models.CharField(max_length=255, blank=True, null=True, default='')
 
     def all_ports(self):
