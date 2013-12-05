@@ -37,7 +37,11 @@ class Step1Form(forms.Form):
     def get_full_name(self):
         """Return the full name for the VM"""
 
-        return self.cleaned_data['name'] + '.' + self.cleaned_data['proxmox'].name
+        if self.cleaned_data['proxmox'].hostname_for_vms_creation:
+            return self.cleaned_data['name'] + '.' + self.cleaned_data['proxmox'].hostname_for_vms_creation
+        else:
+            return self.cleaned_data['name'] + '.' + self.cleaned_data['proxmox'].name
+
 
 
 class Step2Form(forms.Form):
