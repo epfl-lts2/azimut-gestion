@@ -148,6 +148,7 @@ server {
         script += """server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
+    client_max_body_size 50M;
 
     """
 
