@@ -203,7 +203,7 @@ class SetupAgepVMForCom(_Wizard):
     def do_task_10(self):
         """Run the fabric script to setup mysql, if needed"""
 
-        server = Server.objects.get(pk=self.step_data[0]['server_pk'])
+        server = Server.objects.get(name=settings.MYSQL_VM)
 
         if self.step_data[1]['create_mysql_database']:
 
