@@ -8,6 +8,11 @@ urlpatterns = patterns(
 
 
     url(r'^$', 'servers_list'),
+
+    url(r'^map$', 'servers_map'),
+
+
+
     url(r'^(?P<pk>[0-9]*)/show/$', 'servers_show'),
     url(r'^(?P<pk>[0-9]*)/edit/$', 'servers_edit'),
     url(r'^(?P<pk>[0-9]*)/delete/$', 'servers_delete'),

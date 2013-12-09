@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Servers map{% endblock %}
+
+{% block content %}
+
+    <h3>{% trans "Map of servers" %}</h3>
+
+    <script type="text/javascript">$(function() { $('#menu-servermap').addClass('active'); });</script>
+
+
+    {% for s in proxmox_servers %}
+
+        <div class="servermapproxmox">
+
+            <ul class="thumbnails">
+
+                {% include "servers/_map_server.html" with s=s only %}
+
+                <li style="clear: both; margin-left: 0px;"></li>
+
+                {% for s in s.get_vms %}
+
+                    {% include "servers/_map_server.html" with s=s only %}
+
+                    {% if forloop.counter|divisibleby:"4" %}
+                        <li style="clear: both; margin-left: 0px;"></li>
+                    {% endif %}
+                {% endfor %}
+
+            </ul>
+
+
+        </div>
+
+    {% endfor %}
+
+  
+
+    <div class="servermapfree">
+
+        <ul class="thumbnails">
+
+            {% for s in outside_servers %}
+                {% include "servers/_map_server.html" with s=s only %}
+
+                {% if forloop.counter|divisibleby:"4" %}
+                    <li style="clear: both; margin-left: 0px;"></li>
+                {% endif %}
+            {% endfor %}
+
+        </ul>
+    </div>
+
+
+
+
+{% endblock %}

@@ -320,3 +320,14 @@ def servers_groupsaccess_user_delete(request, pk, groupPk, userPk):
     messages.success(request, 'The user has been removed from the group.')
 
     return redirect(reverse('servers.views.servers_show', args=(server.pk, )))
+
+
+@login_required
+@staff_member_required
+def servers_map(request):
+    """Show a nice map of servers"""
+
+    proxmox_servers = Server.objects.order_by('name').filter(is_proxmox=True).all()
+    outside_servers = Server.objects.order_by('name').filter(is_proxmox=False, is_vm=False).all()
+
+    return render_to_response('servers/map.html', {'proxmox_servers': proxmox_servers, 'outside_servers': outside_servers }, context_instance=RequestContext(request))
