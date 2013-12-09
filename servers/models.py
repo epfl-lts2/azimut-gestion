@@ -87,6 +87,12 @@ class Server(models.Model):
 
         return cox + ':' + str(port)
 
+    def get_port(self):
+        """Get the port"""
+        # Hack, but easy way :D
+        return self.get_host_for_fabric().split(':')[-1]
+
+
     def random_proxmox_password(self):
         """Return a unique but hard to guess password for new VMs"""
         b = ''
