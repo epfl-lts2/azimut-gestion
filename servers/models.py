@@ -107,6 +107,9 @@ class Server(models.Model):
         """Return the last runs of fabrics scripts"""
         return self.task_set.order_by('-creation_date').all()[:10]
 
+    def get_vms(self):
+        return self.server_set.order_by('name').all()
+
 
 class ServerUser(models.Model):
     server = models.ForeignKey(Server)
