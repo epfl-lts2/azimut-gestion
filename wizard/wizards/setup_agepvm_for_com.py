@@ -230,11 +230,11 @@ class SetupAgepVMForCom(_Wizard):
             sudo = ''
 
             if self.step_data[1]['create_mysql_database']:
-                bdd = 'Les parametres d\'access a la base de donnee sont:\nUsername: ' + self.step_data[1]['username'] + '\nMot de passe: ' + self.step_data[1]['mysql_password'] + '\nHost: mysql\nDatabase: ' + self.step_data[1]['username'] + '\n\n'
+                bdd = u'Les parametres d\'access a la base de donnée sont:\n - Username: ' + self.step_data[1]['username'] + u'\n- Mot de passe: ' + self.step_data[1]['mysql_password'] + '\n- Host: mysql\n- Database: ' + self.step_data[1]['username'] + '\nAdresse PhpMyAdmin : https://mysql.agepoly.ch/phpmyponey/ \n\n'
             if self.step_data[1]['grant_sudo_rights']:
-                sudo = 'L\'utilisateur dispose des droits sudo. Merci de ne pas supprimer les cles SSH de root ou la VM sera potentiellement detruite automatiquement. Usage a vos risques et perils !\n\n'
+                sudo = u'L\'utilisateur dispose des droits sudo. Merci de ne pas supprimer les cles SSH de root ou la VM sera potentiellement detruite automatiquement. Usage a vos risques et perils !\n\n'
             
-            send_mail('[Azimut-gestion::AgepolySetupScript] Parametres pour ' + server.name, 'Bonjour !\n\nJe suis le script de deployment pour l\'AGEPoly et j\'ai le bonheur de vous annonce que j\'ai fini mon travail :]\n\nLes parametres pour la machine ' + server.name + ' sont les suivants:\n\nConnection ssh: ssh ' + server.ssh_connection_string_from_backup.replace('root@', '') + '\nUsername: ' + self.step_data[1]['username'] + '\nMot de passe: ' + self.step_data[1]['password'] + '\n\nLes fichiers web sont a mettre dans le dossier ~/public_html/, les logs sont dans ~/logs/.\n\n' + bdd + sudo + 'Joyeuse journee,\nLe script\n\nPs: N\'oubliez jamais de faire des backups ;)', 'nobody@agepoly.ch',  self.step_data[1]['mail_dest'].split(','), fail_silently=False)
+			send_mail(u'[AGEPoly Server Manager] Parametres pour ' + server.name, u'Bonjour !\n\nJe suis le script de deployment de l\'AGEPoly et j\'ai le bonheur de vous annonce que j\'ai fini mon travail :]\n\nLes parametres pour la machine ' + server.name + ' sont les suivants:\n- Connection ssh: ssh ' + server.ssh_connection_string_from_backup.replace('root@', '') + '\n- Username: ' + self.step_data[1]['username'] + '\n- Mot de passe: ' + self.step_data[1]['password'] + u'\n\nLes fichiers web sont a mettre dans le dossier ~/public_html/, les logs sont dans ~/logs/.\n\nPour uploader des fichiers, vous devez faire du SFTP et pas du FTP et ce pour des raisons évidentes de sécurité, pour ceci utilisez des programme comme WinSCP ou FileZila qui sont gratuits' + bdd + sudo + 'Joyeuse journee,\nLe script et le serveur Azimut-gestion\n\nPs: N\'oubliez jamais de faire des backups ;)/n/n', 'nobody@agepoly.ch',  self.step_data[1]['mail_dest'].split(','), fail_silently=False)
 
 
         return (True, None)
