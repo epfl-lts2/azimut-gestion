@@ -148,7 +148,7 @@ server {
         script += """server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
-    client_max_body_size 50M;
+    client_max_body_size 101M;
 
     """
 
@@ -170,16 +170,10 @@ server {
         if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
             script += """        ssl on;
     """
-            if host.domain != 'truffe.polylan.ch':
-                script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
-        """
-                script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
-        """
-            else:
-                script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """-polylan;
-        """
-                script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """-polylan;
-        """
+            script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
+    """
+            script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
+    """
 
 
         if host.force_https:

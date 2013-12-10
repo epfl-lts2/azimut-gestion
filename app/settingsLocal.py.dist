@@ -47,5 +47,3 @@ BROKER_URL = ''
 
 NGNIX_SSL_PEM = ''
 NGNIX_SSL_KEY = ''
-
-MYSQL_VM = ''
