@@ -155,6 +155,8 @@ SAMBA_USER_PREFIX = 'smb-'
 NGNIX_SSL_PEM = ''
 NGNIX_SSL_KEY = ''
 
+CREATE_VM_STORAGE = 'local'
+
 try:
     from settingsLocal import *
 except ImportError:
