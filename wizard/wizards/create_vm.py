@@ -277,7 +277,7 @@ class CreateVm(_Wizard):
 
             post_data = {'ostemplate': self.step_data[1]['template'], 'vmid': id, 'cpus': self.step_data[1]['cpus'], 'description': 'fabric-manual-from-wizard',
                          'disk': self.step_data[1]['disk'], 'hostname': srv.name, 'memory': self.step_data[1]['ram'],
-                         'password': srv.random_proxmox_password(), 'swap': self.step_data[1]['swap'], 'ip_address': srv.internal_ip}
+                         'password': srv.random_proxmox_password(), 'swap': self.step_data[1]['swap'], 'ip_address': srv.internal_ip, 'storage': settings.CREATE_VM_STORAGE}
 
             retour = com.createOpenvzContainer(srv.vm_host.proxmox_node_name, post_data)
 
