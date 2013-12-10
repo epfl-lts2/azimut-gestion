@@ -38,6 +38,11 @@ def run_task(id):
     else:
         needUser = False
 
+    needKomUser = '[$AG:NeedKomUser]' in description
+    needSudo = '[$AG:NeedSudo]' in description
+    needMysqlPassword = '[$AG:NeedMysqlPassword]' in description
+    needSrvIp = '[$AG:NeedSrvIp]' in description
+
     if not task.server.ssh_connection_string_from_gestion:
         task.stderr = 'I don\'t know how to connect to the server'
         task.end_date = timezone.now()
@@ -56,6 +61,28 @@ def run_task(id):
         task.save()
         return
 
+    if needKomUser or needSudo or needMysqlPassword:
+        if not task.args:
+            task.stderr = 'I needed special arguements bot task.args wasen\'t set !.'
+            task.end_date = timezone.now()
+            task.save()
+            return
+        try:
+            import json
+            arg_data = json.loads(task.args)
+        except:
+            task.stderr = 'I needed special arguements bot task.args wasen\'t json !.'
+            task.end_date = timezone.now()
+            task.save()
+            return
+
+        for (arg, name) in ((needKomUser, 'user'), (needSudo, 'sudo'), (needMysqlPassword, 'password')):
+            if arg and name not in arg_data:
+                task.stderr = 'I needed ' + name + ' but it wasent in args.'
+                task.end_date = timezone.now()
+                task.save()
+                return
+
     thing_to_set = ''
 
     if needGestion:
@@ -69,6 +96,18 @@ def run_task(id):
 
     if needUser:
         thing_to_set += ',fab_user=' + task.args
+
+    if needKomUser:
+        thing_to_set += ',fab_komuser=' + arg_data['user']
+
+    if needSudo:
+        thing_to_set += ',fab_addsudo=' + arg_data['sudo']
+
+    if needMysqlPassword:
+        thing_to_set += ',fab_mysqlpassword=' + arg_data['password']
+
+    if needSrvIp:
+        thing_to_set += ',fab_srvip=' + task.server.internal_ip  
 
     thing_to_set = thing_to_set[1:]
 

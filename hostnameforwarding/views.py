@@ -170,10 +170,16 @@ server {
         if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
             script += """        ssl on;
     """
-            script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
-    """
-            script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
-    """
+            if host.domain != 'truffe.polylan.ch':
+                script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
+        """
+                script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
+        """
+            else:
+                script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """-polylan;
+        """
+                script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """-polylan;
+        """
 
 
         if host.force_https:
