@@ -8,4 +8,7 @@ urlpatterns = patterns(
 
     url(r'^$', 'home'),
     url(r'^show/(?P<pk>[0-9]*)/$', 'show_run'),
+    url(r'^clean_up$', 'clean_up'),
+    url(r'^get_description$', 'get_description'),
+    
 )

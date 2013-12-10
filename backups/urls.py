@@ -12,4 +12,6 @@ urlpatterns = patterns(
     url(r'^(?P<pk>[0-9]*)/run/$', 'backups_run'),
     url(r'^get_conf/(?P<pk>[0-9]*)/$', 'get_conf'),
 
+    url(r'^clean_up$', 'clean_up'),
+
 )

@@ -72,6 +72,7 @@
 					</table>
 
 					<div class="row-fluid box-section" style="text-align: right;">
+                        <a href="{% url 'backups.views.clean_up' %}" class="btn btn-danger"><i class="icon-minus icon-white"></i> {% trans "Cleanup >24h runs" %}</a>
 						<a href="{% url 'backups.views.backups_edit' '0' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
 					</div>
 

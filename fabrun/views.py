@@ -24,6 +24,8 @@ from servers.models import Server
 from fabrun.models import Task
 from fabrun.tasks import run_task
 
+import datetime
+
 KEYWORDS = ('[$AG:NeedGestion]', '[$AG:NeedKM]', '[$AG:NeedUser]')
 
 
@@ -51,20 +53,22 @@ def home(request):
 
     out, __ = subprocess.Popen(['fab', '--shortlist'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=settings.FABRIC_FOLDER).communicate()
 
-    for command in out.split('\n'):
+    # for command in out.split('\n'):
 
-        if command:
+    #     if command:
 
-            out2, __ = subprocess.Popen(['fab', '-d', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=settings.FABRIC_FOLDER).communicate()
+    #         out2, __ = subprocess.Popen(['fab', '-d', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=settings.FABRIC_FOLDER).communicate()
 
-            description = out2.split('\n')[2]
+    #         description = out2.split('\n')[2]
 
-            for keyword in KEYWORDS:
-                description = description.replace(keyword, '')
+    #         for keyword in KEYWORDS:
+    #             description = description.replace(keyword, '')
 
-            description = description.strip()
+    #         description = description.strip()
 
-            liste.append((command, description))
+    #         liste.append((command, description))
+
+    liste = out.split('\n')
 
     servers = Server.objects.exclude(ssh_connection_string_from_gestion=None).order_by('name').all()
 
@@ -81,3 +85,38 @@ def show_run(request, pk):
     task = get_object_or_404(Task, pk=pk)
 
     return render_to_response('fabrun/show_run.html', {'task': task}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def clean_up(request):
+
+    Task.objects.filter(creation_date__lt = timezone.now() - datetime.timedelta(days=1)).delete()
+
+    messages.success(request, "Old fabric runs have been deleted")
+
+    return HttpResponseRedirect(reverse('fabrun.views.home'))
+
+
+@login_required
+@staff_member_required
+def get_description(request):
+
+    command = request.GET.get('task')
+
+    out, __ = subprocess.Popen(['fab', '--shortlist'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=settings.FABRIC_FOLDER).communicate()
+
+    if command in out.split('\n'):
+
+        out2, __ = subprocess.Popen(['fab', '-d', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=settings.FABRIC_FOLDER).communicate()
+
+        description = out2.split('\n')[2]
+
+        for keyword in KEYWORDS:
+            description = description.replace(keyword, '')
+
+        description = description.strip()
+
+        return HttpResponse(description)
+
+    raise Http404

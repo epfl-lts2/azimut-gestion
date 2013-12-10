@@ -40,7 +40,7 @@
 								<select name="script" id="script" placeholder="{% trans "Select a script" %}">
 									<option></option>
 									{% for s in liste %}
-										<option value="{{s.0}}" text="{{s.1}}">{{s.0}}</option>
+										<option value="{{s}}">{{s}}</option>
 									{% endfor %}
 								</select>
 								<span style="font-size: 80%" id="script-text"></span>
@@ -93,8 +93,8 @@
 
 
 					<div class="row-fluid box-section" style="text-align: right;">
-						<a href="{% url 'groups.views.groups_edit' '0' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
-					</div>
+                        <a href="{% url 'fabrun.views.clean_up' %}" class="btn btn-danger"><i class="icon-minus icon-white"></i> {% trans "Cleanup >24h entries" %}</a>
+                    </div>
 
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 
 	<script type="text/javascript">
 		$('#servers').css('width', '420px').select2();
-		$('#script').css('width', '420px').select2().on('change', function(e) {console.log(e); $('#script-text').html($(e.added.element).attr('text'));});
+		$('#script').css('width', '420px').select2().on('change', function(e) { $.ajax( '{% url 'fabrun.views.get_description' %}?task=' + encodeURIComponent( $(e.added.element).val())).success(function(data) { $('#script-text').html(data); } ); });
 	</script>
 
 {% endblock %}

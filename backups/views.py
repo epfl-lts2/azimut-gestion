@@ -16,9 +16,12 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from backups.models import Backup
+from backups.models import Backup, BackupRun
 from backups.forms import BackupForm
 from backups.tasks import run_backup
+
+from django.utils import timezone
+import datetime
 
 
 @login_required
@@ -154,3 +157,14 @@ backup\t""" + cox + ':' + backup.folder_from + """\t.
 """
 
     return HttpResponse(script)
+
+
+@login_required
+@staff_member_required
+def clean_up(request):
+
+    BackupRun.objects.filter(start_date__lt = timezone.now() - datetime.timedelta(days=1)).delete()
+
+    messages.success(request, "Old backups runs have been deleted")
+
+    return HttpResponseRedirect(reverse('backups.views.backups_list'))
