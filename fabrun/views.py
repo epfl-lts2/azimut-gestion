@@ -24,7 +24,7 @@ from servers.models import Server
 from fabrun.models import Task
 from fabrun.tasks import run_task
 
-KEYWORDS = ('[$AG:NeedGestion]', '[$AG:NeedKM]', '[$AG:NeedUser]', '[$AG:NeedKomUser]', '[$AG:NeedSudo]', '[$AG:NeedMysqlPassword]', '[$AG:NeedSrvIp]')
+KEYWORDS = ('[$AG:NeedGestion]', '[$AG:NeedKM]', '[$AG:NeedUser]')
 
 
 @login_required
