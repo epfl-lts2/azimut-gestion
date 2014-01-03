@@ -150,6 +150,8 @@ retain\tmonthly\t3
 link_dest\t1
 cmd_cp\t/bin/cp
 
+use_lazy_deletes\t1
+
 ssh_args\t""" + ssh_args + """
 rsync_long_args\t--delete --numeric-ids --relative --delete-excluded --stats""" + excludes + """
 
@@ -163,7 +165,7 @@ backup\t""" + cox + ':' + backup.folder_from + """\t.
 @staff_member_required
 def clean_up(request):
 
-    BackupRun.objects.filter(start_date__lt = timezone.now() - datetime.timedelta(days=1)).delete()
+    BackupRun.objects.filter(start_date__lt=timezone.now() - datetime.timedelta(days=1)).delete()
 
     messages.success(request, "Old backups runs have been deleted")
 
