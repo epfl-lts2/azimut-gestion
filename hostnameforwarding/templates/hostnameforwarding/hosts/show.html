@@ -55,6 +55,19 @@
 									<div class="controls controls-txt">{{object.force_https|yesno}}</div>
 								</div>
 
+								{% if object.custom_https_certificate_pem %}
+									<div class="control-group control-group-txt">
+										<label class="control-label control-label-txt">{% trans "Custom SSL certificate (PEM)" %}</label>
+										<div class="controls controls-txt">{{object.custom_https_certificate_pem}}</div>
+									</div>
+								{% endif %}
+
+								{% if object.custom_https_certificate_key %}
+									<div class="control-group control-group-txt">
+										<label class="control-label control-label-txt">{% trans "Custom SSL certificate (KEY)" %}</label>
+										<div class="controls controls-txt">{{object.custom_https_certificate_key}}</div>
+									</div>
+								{% endif %}
 							</fieldset>
 						</form>
 

@@ -13,9 +13,12 @@ class Hostnameforwarded(models.Model):
 
     force_https = models.BooleanField(default=False)
 
+    custom_https_certificate_pem = models.CharField(max_length=255, default='', blank=True, null=True)
+    custom_https_certificate_key = models.CharField(max_length=255, default='', blank=True, null=True)
+
     def clean(self):
         from django.core.exceptions import ValidationError
-        
+
         # Server host and to must match
         if self.server_to.vm_host != self.server_host:
             raise ValidationError('The VM is not hosted on the specified host.')

@@ -175,16 +175,14 @@ server {
         if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
             script += """        ssl on;
     """
-            script += """        ssl_certificate      """ + settings.NGNIX_SSL_PEM + """;
+            script += """        ssl_certificate      """ + (host.custom_https_certificate_pem or settings.NGNIX_SSL_PEM) + """;
     """
-            script += """        ssl_certificate_key  """ + settings.NGNIX_SSL_KEY + """;
+            script += """        ssl_certificate_key  """ + (host.custom_https_certificate_key or settings.NGNIX_SSL_KEY) + """;
     """
-
 
         if host.force_https:
                 script += """      return 301 https://$server_name$request_uri;
             """
-
 
         script += """
     }
