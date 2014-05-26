@@ -103,7 +103,7 @@ INSTALLED_APPS = (
 
     'main',
     'servers',
-    'groups', 
+    'groups',
     'keymanager',
     'hostnameforwarding',
     'portforwarding',
@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'fabrun',
     'wizard',
     'samba',
+    'logstash',
 )
 
 LOGGING = {
@@ -156,6 +157,10 @@ NGNIX_SSL_PEM = ''
 NGNIX_SSL_KEY = ''
 
 CREATE_VM_STORAGE = 'local'
+
+FORCE_SECURE_FOR_USER = False
+
+NGNIX_DEFAULT_REDIRECT = ''
 
 try:
     from settingsLocal import *

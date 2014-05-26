@@ -18,6 +18,7 @@ from hostnameforwarding.tasks import update_hostnameforwarding
 from fabrun.models import Task
 from fabrun.tasks import run_task
 from backups.tasks import run_backup
+from logstash.models import File
 
 
 class Step1Form(forms.Form):
@@ -43,7 +44,6 @@ class Step1Form(forms.Form):
             return self.cleaned_data['name'] + '.' + self.cleaned_data['proxmox'].name
 
 
-
 class Step2Form(forms.Form):
     add_to_groups = forms.BooleanField(initial=True, required=False)
     add_groups = forms.BooleanField(initial=True, required=False)
@@ -53,6 +53,7 @@ class Step2Form(forms.Form):
     setup_hostforwarding = forms.BooleanField(initial=True, required=False)
     setup_backups = forms.BooleanField(initial=True, required=False)
     do_first_backup = forms.BooleanField(initial=True, required=False)
+    create_logstash_entries = forms.BooleanField(initial=True, required=False)
 
     name = forms.CharField()
     keymanager_name = forms.CharField()
@@ -166,10 +167,10 @@ class CreateVm(_Wizard):
     _description = 'Simple wizard to create a VM'
 
     _nb_step = 2
-    _nb_task = 9
+    _nb_task = 10
 
     _steps_names = ['VM Name and Host', 'Advanced parameters']
-    _tasks_names = ['Create server', 'Setup VM groups', 'Create VM', 'Start VM', 'Open ports', 'Forward domain', 'Execute setup script', 'Create backup task', 'Execute backup task']
+    _tasks_names = ['Create server', 'Setup VM groups', 'Create VM', 'Start VM', 'Open ports', 'Forward domain', 'Execute setup script', 'Create backup task', 'Execute backup task', 'Create logstash entries']
 
     def display_step_1(self, request):
 
@@ -369,5 +370,17 @@ class CreateVm(_Wizard):
             id = self.task_data[7]['bkp_pk']
 
             run_backup(id)
+
+        return (True, None)
+
+    def do_task_10(self):
+        """Create logstash entries"""
+        if self.step_data[1]['create_logstash_entries']:
+
+            srv = Server.objects.get(pk=self.task_data[0]['server_pk'])
+
+            if srv.vm_host.logstash_shipper:
+                File(server=srv.vm_host, file='/var/lib/vz/root/' + str(self.task_data[2]['vm_id']) + '/var/log/auth.log', type='syslog', tags=srv.vm_host.name.split('.')[-2] + ',vm,auth.log,' + srv.name).save()
+                File(server=srv.vm_host, file='/var/lib/vz/root/' + str(self.task_data[2]['vm_id']) + '/var/log/syslog', type='syslog', tags=srv.vm_host.name.split('.')[-2] + ',vm,syslog,' + srv.name).save()
 
         return (True, None)

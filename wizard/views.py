@@ -143,7 +143,7 @@ def do_tasks(request, uid):
 
     status_id = request.session['wiz_' + uid + '_status_id']
 
-    return render_to_response('wizard/task.html', {'wiz': wiz, 'tasks': tasks, 'nb_tasks': wiz.get_nb_task(),  'status_id': status_id}, context_instance=RequestContext(request))
+    return render_to_response('wizard/task.html', {'wiz': wiz, 'tasks': tasks, 'nb_tasks': wiz.get_nb_task(), 'status_id': status_id}, context_instance=RequestContext(request))
 
 
 @login_required

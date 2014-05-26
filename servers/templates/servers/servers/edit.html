@@ -12,35 +12,33 @@
 	<script type="text/javascript">$(function() { $('#menu-servers').addClass('active'); });</script>
 
 
-	 <div class="row-fluid">
-        <!-- block -->
-        <div class="block">
-            <div class="navbar navbar-inner block-header">
-                <div class="muted pull-left">{% trans "Edition of a server" %}</div>
-            </div>
-            <div class="block-content collapse in">
-                <div class="span12">
+	<div class="row-fluid">
+		<!-- block -->
+		<div class="block">
+			<div class="navbar navbar-inner block-header">
+				<div class="muted pull-left">{% trans "Edition of a server" %}</div>
+			</div>
+			<div class="block-content collapse in">
+				<div class="span12">
 
 					<form action="" method="POST" class="form-horizontal">
-					{% csrf_token %}
+						{% csrf_token %}
 
-					{{form|as_bootstrap }}
+						{{form|as_bootstrap }}
 
-					<div class="control-group">
-						<label class="control-label" for="users">Users</label>
-						<div class="controls">
-							<input name="users" id="users" value="{{users}}" style=" width: 206px;">
+						<div class="control-group">
+							<label class="control-label" for="users">Users</label>
+							<div class="controls">
+								<input name="users" id="users" value="{{users}}" style=" width: 206px;">
+							</div>
 						</div>
-					</div>
 
-					<div class="row-fluid box-section" style="text-align: right;">
-		                <a href="{% url 'servers.views.servers_list' %}" class="btn">{% trans "Back to the list" %}</a>
-		                <input type="submit" class="btn btn-primary" value="{% trans "Save" %}">
-		            </div>
+						<div class="row-fluid box-section" style="text-align: right;">
+							<a href="{% url 'servers.views.servers_list' %}" class="btn">{% trans "Back to the list" %}</a>
+							<input type="submit" class="btn btn-primary" value="{% trans "Save" %}">
+						</div>
 
 					</form>
-
-
 				</div>
 			</div>
 		</div>
@@ -55,10 +53,13 @@
 				$('#id_vm_host').parent().parent().show();
 				$('#id_ngnix_server').parent().parent().hide();
 				$('#id_ngnix_server').val('');
+				$('#id_mysql_server').parent().parent().hide();
+				$('#id_mysql_server').val('');
 			} else {
 				$('#id_internal_ip').parent().parent().hide();
 				$('#id_vm_host').parent().parent().hide();
 				$('#id_ngnix_server').parent().parent().show();
+				$('#id_mysql_server').parent().parent().show();
 				$('#id_internal_ip').val('');
 				$('#id_vm_host').val('');
 			}
@@ -84,8 +85,7 @@
 
 		$("#users").select2({tags:[{% for u in all_users %}"{{u}}",{% endfor %}],tokenSeparators: [",", " "]});
 
-		$('#id_vm_host,#id_ngnix_server').css('width', '220px').select2();
-
+		$('#id_vm_host,#id_ngnix_server,#id_mysql_server,#id_users_owning_the_server').css('width', '220px').select2();
 
 	</script>
 

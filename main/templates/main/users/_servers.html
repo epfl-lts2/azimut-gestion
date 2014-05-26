@@ -1,0 +1,46 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Servers owned" %}</div>
+	</div>
+	<div class="block-content collapse in">
+
+		<table class="table table-condensed table-hover">
+			{% for server in object.server_set.all %}
+				<tr>
+					<td>
+						<a href="{% url 'servers.views.servers_show' server.pk %}">{{server}}</a>
+					</td>
+
+					<td>
+						{% if user.is_staff %}
+							<a href="{% url 'main.views.users_server_delete' object.pk server.pk %}" class="btn btn-warning btn-mini" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Remove access" %}</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+
+		{% if user.is_staff %}
+		<span style="float: right;">
+			<select id="server_select" style="margin-right: 10px; width: 220px;">
+				<option></option>
+				{% for s in servers %}
+					<option value="{{s.pk}}">{{s}}</option>
+				{% endfor %}
+			</select>
+			<a href="{% url 'main.views.users_server_add' object.pk %}" onclick="if ($('#server_select').val() == '') { alert('{% trans 'Please select a server !' %}'); return false; } else { $(this).attr('href', $(this).attr('href') + '?serverPk=' + $('#server_select').val()); return true; } " class="btn btn-success" style="float: right;"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+		</span>
+		{% endif %}
+		
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#server_select").select2({placeholder: "{% trans 'Select a server to add' %}"});
+
+</script>

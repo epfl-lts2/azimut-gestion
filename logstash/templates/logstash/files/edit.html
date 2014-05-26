@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Logstash{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "File management" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-logstash').addClass('active'); });</script>
+
+
+	 <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Edition of a file" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+					<form action="" method="POST" class="form-horizontal">
+					{% csrf_token %}
+
+					{{form|as_bootstrap }}
+
+					<div class="row-fluid box-section" style="text-align: right;">
+		                <a href="{% url 'logstash.views.file_list' %}" class="btn">{% trans "Back to the list" %}</a>
+		                <input type="submit" class="btn btn-primary" value="{% trans "Save" %}">
+		            </div>
+
+					</form>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$("#id_server,#id_type").css('width', '220px').select2();
+
+        $("#id_tags").css('width', '220px').select2({tags:[{% for t in tags %}"{{t}}",{% endfor %}], tokenSeparators: [","]});
+	</script>
+
+{% endblock %}
+

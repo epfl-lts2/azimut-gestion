@@ -81,10 +81,12 @@
                                 <a href="{% url "main.views.users_list" %}"><i class="icon-chevron-right"></i> {% trans "Users" %}</a>
                             </li>
 
+                        {% endif %}
                             <li id="menu-servers">
                                 <a href="{% url "servers.views.servers_list" %}"><i class="icon-chevron-right"></i> {% trans "Servers" %}</a>
                             </li>
 
+                        {% if user.is_staff %}
                             <li id="menu-servermap">
                                 <a href="{% url "servers.views.servers_map" %}"><i class="icon-chevron-right"></i> {% trans "Servers map" %}</a>
                             </li>
@@ -127,6 +129,10 @@
 
                             <li id="menu-samba">
                                 <a href="{% url "samba.views.shares_list" %}"><i class="icon-chevron-right"></i> {% trans "Samba" %}</a>
+                            </li>
+
+                            <li id="menu-logstash">
+                                <a href="{% url "logstash.views.file_list" %}"><i class="icon-chevron-right"></i> {% trans "Logstash" %}</a>
                             </li>
                         {% endif %}
                         

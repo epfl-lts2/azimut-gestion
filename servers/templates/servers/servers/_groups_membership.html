@@ -11,7 +11,9 @@
 			{% for group in object.group_set.all %}
 				<tr>
 					<td>
-						<a href="{% url 'groups.views.groups_show' group.pk %}">{{group}}</a>
+						{% if user.is_staff %}<a href="{% url 'groups.views.groups_show' group.pk %}">{% endif %}
+                            {{group}}
+                        {% if user.is_staff %}</a>{% endif %}
 					</td>
 
 					<td>
@@ -30,7 +32,9 @@
 				{% for group in key.group_set.all %}
 					<tr>
 						<td>
-							<a href="{% url 'groups.views.groups_show' group.pk %}">{{group}}</a>
+							{% if user.is_staff %}<a href="{% url 'groups.views.groups_show' group.pk %}">{% endif %}
+                                {{group}}
+                            {% if user.is_staff %}</a>{% endif %}
 						</td>
 
 						<td>

@@ -23,21 +23,25 @@ from django.contrib.auth.models import User
 
 
 @login_required
-@staff_member_required
 def servers_list(request):
     """Show the list of servers"""
 
-    liste = Server.objects.order_by('-is_vm', 'vm_host__name', 'name').all()
+    if request.user.is_staff:
+        liste = Server.objects.order_by('-is_vm', 'vm_host__name', 'name').all()
+    else:
+        liste = Server.objects.order_by('-is_vm', 'vm_host__name', 'name').filter(users_owning_the_server=request.user).all()
 
     return render_to_response('servers/servers/list.html', {'liste': liste}, context_instance=RequestContext(request))
 
 
 @login_required
-@staff_member_required
 def servers_show(request, pk):
     """Show details of an Server"""
 
     object = get_object_or_404(Server, pk=pk)
+
+    if not request.user.is_staff and not request.user in object.users_owning_the_server.all():
+        raise Http404
 
     groups = Group.objects.order_by('name').all()
 
@@ -330,4 +334,4 @@ def servers_map(request):
     proxmox_servers = Server.objects.order_by('name').filter(is_proxmox=True).all()
     outside_servers = Server.objects.order_by('name').filter(is_proxmox=False, is_vm=False).all()
 
-    return render_to_response('servers/map.html', {'proxmox_servers': proxmox_servers, 'outside_servers': outside_servers }, context_instance=RequestContext(request))
+    return render_to_response('servers/map.html', {'proxmox_servers': proxmox_servers, 'outside_servers': outside_servers}, context_instance=RequestContext(request))

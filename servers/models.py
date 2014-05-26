@@ -4,6 +4,8 @@ from django.conf import settings
 
 import hashlib
 
+from main.models import User
+
 
 class Server(models.Model):
     name = models.CharField(max_length=255)
@@ -14,6 +16,7 @@ class Server(models.Model):
     internal_ip = models.IPAddressField(blank=True, null=True)
     vm_host = models.ForeignKey('Server', blank=True, null=True, related_name='server_set')
     ngnix_server = models.ForeignKey('Server', blank=True, null=True, related_name='ngnixed_server_set')
+    mysql_server = models.ForeignKey('Server', blank=True, null=True, related_name='mysqled_server_set')
 
     ssh_connection_string_from_gestion = models.CharField(max_length=255, blank=True, null=True)
     ssh_connection_string_from_backup = models.CharField(max_length=255, blank=True, null=True)
@@ -28,6 +31,12 @@ class Server(models.Model):
 
     samba_management = models.BooleanField(default=False)
     samba_base_folder = models.CharField(max_length=255, blank=True, null=True, default='')
+
+    logstash_shipper = models.BooleanField(default=False)
+
+    users_owning_the_server = models.ManyToManyField(User, blank=True, null=True, help_text='Keys of users will be allowed and he will be able do display the server page details')
+
+    notes = models.TextField(blank=True, null=True)
 
     def all_ports(self):
         """Return all ports (forwarded from and to)"""
@@ -91,7 +100,6 @@ class Server(models.Model):
         """Get the port"""
         # Hack, but easy way :D
         return self.get_host_for_fabric().split(':')[-1]
-
 
     def random_proxmox_password(self):
         """Return a unique but hard to guess password for new VMs"""

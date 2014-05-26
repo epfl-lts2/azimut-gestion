@@ -66,10 +66,12 @@
 						</form>
 
 						<div class="row-fluid box-section" style="text-align: right;">
-							<a href="{% url 'backups.views.backups_run' object.pk %}" class="btn btn btn-warning" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-refresh icon-white"></i> {% trans "Force execution" %}</a>
-			                <a href="{% url 'backups.views.backups_list' %}" class="btn"><i class="icon-list icon-black"></i> {% trans "Back to the list" %}</a>
-			                <a href="{% url 'backups.views.backups_edit' object.pk %}" class="btn btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
-			            </div>
+							{% if user.is_staff %}
+								<a href="{% url 'backups.views.backups_run' object.pk %}" class="btn btn btn-warning" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-refresh icon-white"></i> {% trans "Force execution" %}</a>
+								<a href="{% url 'backups.views.backups_list' %}" class="btn"><i class="icon-list icon-black"></i> {% trans "Back to the list" %}</a>
+								<a href="{% url 'backups.views.backups_edit' object.pk %}" class="btn btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+							{% endif %}
+					</div>
 
 					</div>
 				</div>

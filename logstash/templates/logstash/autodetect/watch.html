@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+
+{% block title %}Logstash{% endblock %}
+
+{% block content %}
+
+    <h3>Automatic detection</h3>
+
+    <script type="text/javascript">$(function() { $('#menu-logstash').addClass('active'); });</script>
+
+    <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">{% trans "Execution progress" %}</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span12">
+
+                    <div class="pre" id="output"></div>
+
+                    <div id="done" class="alert alert-success" style="display: none;">{% trans "Done !" %} <a href="{% url 'logstash.views.watch_final' ex.pk %}" class="btn btn-primary" style="float: right;">Review</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function check_status() {
+            $.ajax('{% url 'logstash.views.watch_get_status' ex.pk %}').done(function (data) {
+
+                sta = data[0];
+                text = data.substr(1);
+
+                done = sta == 'd';
+
+                $('#output').html(text.replace(/\n/gi, '<br/>'));
+
+                if (done) {
+                    $('#done').show();
+                } else {
+                    setTimeout("check_status();", 1000);
+                }
+
+            }).error(function () { setTimeout("check_status();", 5000); });
+        }
+
+        check_status();
+
+    </script>
+
+
+{% endblock %}
+

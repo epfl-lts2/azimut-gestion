@@ -12,7 +12,9 @@
 			{% for run in object.last_runs %}
 				<tr>
 					<td>
-						<a href="{% url 'fabrun.views.show_run' run.pk %}">{{run.command}}</a>
+                        {% if user.is_staff %}<a href="{% url 'fabrun.views.show_run' run.pk %}">{% endif %}
+                            {{run.command}}
+                        {% if user.is_staff %}</a>{% endif %}
 					</td>
 					<td>
 						{{run.creation_date|timesince}} {% trans "ago" %}

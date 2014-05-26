@@ -20,7 +20,7 @@ class Step1Form(forms.Form):
 
 
 class CreateUser(_Wizard):
-    """Simple wizard to create a VM"""
+    """Simple wizard to create a user on a VM"""
 
     _name = 'CreateUser'
     _description = 'Simple wizard to create a new user on a server'

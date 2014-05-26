@@ -6,7 +6,8 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     'main.views',
 
-    url(r'^$', 'home'),
+    url(r'^$', 'home_redirect'),
+    url(r'^home/$', 'home'),
     url(r'^about/me$', 'me'),
 
     url(r'^about/me/edit$', 'me_edit'),
@@ -29,6 +30,9 @@ urlpatterns = patterns(
 
     url(r'^users/groups/add/(?P<pk>[0-9]*)$', 'users_groups_add'),
     url(r'^users/groups/delete/(?P<pk>[0-9]*)/(?P<groupPk>[0-9]*)$', 'users_groups_delete'),
+
+    url(r'^users/servers/add/(?P<pk>[0-9]*)$', 'users_server_add'),
+    url(r'^users/servers/delete/(?P<pk>[0-9]*)/(?P<serverPk>[0-9]*)$', 'users_server_delete'),
 
     url(r'^git_hook/(?P<id>.*)/$', 'git_hook'),
 )

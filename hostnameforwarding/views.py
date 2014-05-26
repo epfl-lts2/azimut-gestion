@@ -138,7 +138,14 @@ server {
 
     root /usr/share/nginx/www;
     index index.html index.htm;
+"""
 
+    if settings.NGNIX_DEFAULT_REDIRECT:
+        script += """
+    return 301 """ + settings.NGNIX_DEFAULT_REDIRECT + """;
+"""
+
+    script += """
     server_name localhost;
 
 }

@@ -63,4 +63,10 @@ def get_keys(request, server, user):
             if key.key not in ssh_keys:
                 ssh_keys.append(key.key)
 
+    # Allow each user who 'own' the server
+    for user in server.users_owning_the_server.all():
+        for key in user.sshkey_set.all():
+            if key.key not in ssh_keys:
+                ssh_keys.append(key.key)
+
     return render_to_response('keymanager/get_keys.html', {'ssh_keys': ssh_keys}, context_instance=RequestContext(request))

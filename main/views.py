@@ -24,11 +24,27 @@ from main.models import SshKey
 from groups.models import Group
 from main.tasks import update_git_repo
 from backups.models import Backup
+from servers.models import Server
+
+
+def home_redirect(request):
+    """Redirect the user to the home page, forcing HTTPs if needed. As the real home force authentification, this try to force https for the login too"""
+
+    if not request.is_secure() and settings.FORCE_SECURE_FOR_USER:
+        return HttpResponseRedirect('https://' + request.get_host() + request.path)
+
+    r = redirect('main.views.home')
+    if settings.FORCE_SECURE_FOR_USER:
+        r['Strict-Transport-Security'] = 'max-age=31536000'
+    return r
 
 
 @login_required
 def home(request):
     """Show the welcome page"""
+
+    if not request.is_secure() and settings.FORCE_SECURE_FOR_USER:
+        return HttpResponseRedirect('https://' + request.get_host() + request.path)
 
     backups = Backup.objects.order_by('name').all()
 
@@ -60,8 +76,9 @@ def users_show(request, pk):
     object = get_object_or_404(User, pk=pk)
 
     groups = Group.objects.exclude(users=object).order_by('name').all()
+    servers = Server.objects.exclude(users_owning_the_server=object).order_by('name').all()
 
-    return render_to_response('main/users/show.html', {'object': object, 'groups': groups}, context_instance=RequestContext(request))
+    return render_to_response('main/users/show.html', {'object': object, 'groups': groups, 'servers': servers}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -312,3 +329,35 @@ def git_hook(request, id):
     update_git_repo.delay(id)
 
     return HttpResponse('Happy')
+
+
+@login_required
+@staff_member_required
+def users_server_add(request, pk):
+    """Add a user to a server access"""
+
+    user = get_object_or_404(User, pk=pk)
+
+    server = get_object_or_404(Server, pk=request.GET.get('serverPk'))
+
+    server.users_owning_the_server.add(user)
+
+    messages.success(request, 'The user has been added to the server.')
+
+    return redirect(reverse('main.views.users_show', args=(pk, )))
+
+
+@login_required
+@staff_member_required
+def users_server_delete(request, pk, serverPk):
+    """Delete an user from a server access"""
+
+    user = get_object_or_404(User, pk=pk)
+
+    server = get_object_or_404(Server, pk=serverPk)
+
+    server.users_owning_the_server.remove(user)
+
+    messages.success(request, 'The user has been removed from the server.')
+
+    return redirect(reverse('main.views.users_show', args=(pk, )))

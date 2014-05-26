@@ -35,11 +35,13 @@ def backups_list(request):
 
 
 @login_required
-@staff_member_required
 def backups_show(request, pk):
-    """Show details of a hostname forwarder"""
+    """Show details of a backup"""
 
     object = get_object_or_404(Backup, pk=pk)
+
+    if not request.user.is_staff and (request.user not in object.server_from.users_owning_the_server.all() and request.user not in object.server_to.users_owning_the_server.all()):
+        raise Http404
 
     liste = object.backuprun_set.order_by('-start_date').all()
 

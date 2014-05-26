@@ -28,7 +28,7 @@
 								<th>{% trans "Proxmox ?" %}</th>
 								<th>{% trans "Vm Host" %}</th>
 								<th>{% trans "IP" %}</th>
-								<th style="width: 150px;"></th>
+								{% if user.is_staff %}<th style="width: 150px;"></th>{% endif %}
 							</tr>
 						</thead>
 						<tbody>
@@ -39,10 +39,12 @@
 									<td>{{elem.is_proxmox|yesno}}</td>
 									<td><a href="{% url 'servers.views.servers_show' elem.vm_host.pk %}">{{elem.vm_host|default:""}}</a></td>
 									<td>{{elem.external_ip|default:""}} {{elem.internal_ip|default:""}}</td>
-									<td>
-										<a href="{% url 'servers.views.servers_delete' elem.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
-										<a href="{% url 'servers.views.servers_edit' elem.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
-									</td>
+									{% if user.is_staff %}
+										<td>
+											<a href="{% url 'servers.views.servers_delete' elem.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+											<a href="{% url 'servers.views.servers_edit' elem.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+										</td>
+									{% endif %}
 								</tr>
 							{% endfor %}
 							

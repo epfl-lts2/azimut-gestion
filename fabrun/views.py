@@ -91,7 +91,7 @@ def show_run(request, pk):
 @staff_member_required
 def clean_up(request):
 
-    Task.objects.filter(creation_date__lt = timezone.now() - datetime.timedelta(days=1)).delete()
+    Task.objects.filter(creation_date__lt=timezone.now() - datetime.timedelta(days=1)).delete()
 
     messages.success(request, "Old fabric runs have been deleted")
 
