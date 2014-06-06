@@ -1,10 +1,19 @@
 {% load i18n %}
+
+{% if isProxmoxDesign %}
+<li class="span11" style="margin-left: 20px; margin-right: 10px;">
+    <div class="thumbnail alert alert-info" href="#" style="padding-left:60px; padding-right:60px; padding-bottom:20px;  position:relative;">
+{% else %}
 <li class="span3" style="margin-left: 0px; margin-right: 10px;  background-color: #eee;">
-    <div class="thumbnail" href="#">
+    <div class="thumbnail" href="#" style="min-height:245px; position:relative; padding:10px">
+{% endif %}
 
-
-
-        <center><h4>{{s.name}}</h4></center>
+        <center>
+            {% if isProxmoxDesign %}
+                <h3>{% trans "Proxmox server information" %}</h3>
+            {% endif %}
+            <h4>{{s.name}}</h4>
+        </center>
 
         {% if s.ssh_connection_string_from_backup %}<b>{% trans "SSH" %}</b>: <div class="well well-small">ssh {{s.ssh_connection_string_from_backup}}</div>{% endif %}
         <b>{% trans "IP" %}</b>: <small>{{s.external_ip|default:""}} {{s.internal_ip|default:""}}</small><br />
@@ -14,51 +23,54 @@
                 <small>
                     <ul>
                         {% for port in s.portsforwared.all %}
-                            <li>{{port.port_from}}->{{port.port_to}}({{port.get_protocol_display}})</li>
+                            <li>{{port.port_from}}->{{port.port_to}} ({{port.get_protocol_display}})</li>
                         {% endfor %}
                     </ul>
                 </small>
             <br />
         {% endif %}
+        <div style="position: absolute;bottom: 27px; width:100%;">
+            {% if s.backups_of_the_server.count %}
+                <span style="position: absolute; left:4px;">
+                    <b>{% trans "Backups" %}</b>:
+                    <small>
 
-        {% if s.backups_of_the_server.count %}
-            <b>{% trans "Backups" %}</b>:
-            <small>
+                        {% for bkp in s.backups_of_the_server.all %}
 
-                {% for bkp in s.backups_of_the_server.all %}
+                            {% if bkp.get_last_run %}
+                                {% if bkp.get_last_run.end_date %}
+                                    {% if bkp.get_last_run.not_too_old %}
+                                        <span class="label label-success">
+                                    {% else %}
+                                        <span class="label label-important">
+                                    {% endif %}
+                                            {{bkp.get_last_run.end_date|timesince}}
+                                        </span>
+                                {% else %}
+                                     <span class="label label-warning"> {% trans "In progress..." %}</span>
+                                {% endif %}
 
-                    {% if bkp.get_last_run %}
-                        {% if bkp.get_last_run.end_date %}
-                            {% if bkp.get_last_run.not_too_old %}
-                                <span class="label label-success">
                             {% else %}
-                                <span class="label label-important">
+                                <span class="label label-warning">{% trans "Never" %}</span>
                             {% endif %}
-                                    {{bkp.get_last_run.end_date|timesince}}
-                                </span>
-                        {% else %}
-                             <span class="label label-warning"> {% trans "In progress..." %}</span>
-                        {% endif %}
 
-                    {% else %}
-                        <span class="label label-warning">{% trans "Never" %}</span>
-                    {% endif %}
+                        {% endfor %}
 
-                {% endfor %}
+                    </small>
+                </span>
+            {% endif %}
 
-            </small>
-        {% endif %}
+            {% if s.is_vm %}
+                <span class="label label-inverse" style="position: absolute; right:18px;">VM</span>
+            {% endif %}
 
-        {% if s.is_vm %}
-            <span class="label label-inverse" style="float: right;">VM</span>
-        {% endif %}
-
-        {% if s.is_proxmox %}
-            <span class="label label-info" style="float: right;">Proxmox</span>
-        {% endif %}
-
+            {% if s.is_proxmox %}
+                <span class="label label-info" style="position: absolute; right:119px;">Proxmox</span>
+            {% endif %}
+        </div>
         <br />
 
     </div>
 </li>
+
 
