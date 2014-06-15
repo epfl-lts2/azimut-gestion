@@ -162,6 +162,8 @@ FORCE_SECURE_FOR_USER = False
 
 NGNIX_DEFAULT_REDIRECT = ''
 
+BACKUP_SET_LOCK = '/tmp/_azimutgestion_backuplock.lock'
+
 try:
     from settingsLocal import *
 except ImportError:

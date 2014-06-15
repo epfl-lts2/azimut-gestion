@@ -63,7 +63,7 @@ class BackupSetOfRun(models.Model):
 
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default='running')
 
-    start_date = models.DateTimeField()
+    start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
     backupruns = models.ManyToManyField(BackupRun)
