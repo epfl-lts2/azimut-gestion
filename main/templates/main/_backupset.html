@@ -1,0 +1,9 @@
+{% if b %}
+    <tr>
+        <td>{{b.get_type_display}}</td>
+        <td>{{b.start_date|timesince}}</b>
+        <td><span class="label label-{{b.get_status_label}}">{{b.get_status_display}}</span></td>
+        <td><span class="label label-{{b.get_total_time_label}}">{{b.get_total_time}} hours</td>
+        <td>{% if b.type == 'hourly' %}{{b.total_size|filesizeformat}}{% endif %}</td>
+    </tr>
+{% endif %}
