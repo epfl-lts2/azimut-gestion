@@ -36,7 +36,7 @@
 							{% for elem in liste %}
 								<tr>
 									<td>{{elem.start_date}}</td>
-									<td>{{elem.end_date}} ({{elem.end_date|timesince}})</td>
+									<td>{% if elem.end_date %}{{elem.end_date}} ({{elem.end_date|timesince}}){% endif %}</td>
 									<td>{{elem.get_type_display}}</td>
 									<td><span class="label label-{{elem.get_status_label}}">{{elem.get_status_display}}</span></td>
 									<td><span class="label label-{{elem.get_total_time_label}}">{{elem.get_total_time}} hours</td>
