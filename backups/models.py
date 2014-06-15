@@ -61,12 +61,13 @@ class BackupSetOfRun(models.Model):
         ('canceled', 'Cancelled'),
     )
 
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default='running')
 
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True)
 
-    backups = models.ManyToManyField(BackupRun)
+    backupruns = models.ManyToManyField(BackupRun)
+    backups = models.ManyToManyField(Backup)
 
-    total_size = models.BigIntegerField()
-    total_files = models.BigIntegerField()
+    total_size = models.BigIntegerField(default=0)
+    total_files = models.BigIntegerField(default=0)
