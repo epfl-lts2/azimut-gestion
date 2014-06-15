@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from backups.models import Backup, BackupRun
+from backups.models import Backup, BackupRun, BackupSetOfRun
 from backups.forms import BackupForm
 from backups.tasks import run_backup
 
@@ -167,8 +167,49 @@ backup\t""" + cox + ':' + backup.folder_from + """\t.
 @staff_member_required
 def clean_up(request):
 
-    BackupRun.objects.filter(start_date__lt=timezone.now() - datetime.timedelta(days=1)).delete()
+    for b in BackupRun.objects.filter(start_date__lt=timezone.now() - datetime.timedelta(days=1)).all():
+        if b.backupsetofrun_set.count() == 0:
+            b.delete()
 
     messages.success(request, "Old backups runs have been deleted")
 
     return HttpResponseRedirect(reverse('backups.views.backups_list'))
+
+
+@login_required
+@staff_member_required
+def backupsets_list(request):
+    """Show the list of backup sets"""
+
+    liste = BackupSetOfRun.objects.order_by('-start_date').all()
+
+    return render_to_response('backups/backupsets/list.html', {'liste': liste}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def backupsets_cancel(request, pk):
+
+    backupset = get_object_or_404(BackupSetOfRun, pk=pk, status='running')
+    backupset.status = 'canceled'
+    backupset.end_date = timezone.now()
+    backupset.save()
+
+    return HttpResponseRedirect(reverse('backups.views.backupsets_list'))
+
+
+@login_required
+@staff_member_required
+def clean_up_old_sets(request):
+
+    NB_OK = {'hourly': 6, 'daily': 7, 'weekly': 7, 'monthly': 3}
+
+    for b in BackupSetOfRun.objects.order_by('-start_date').all():
+        if NB_OK[b.type] >= 0:
+            NB_OK[b.type] -= 1
+        else:
+            b.delete()
+
+    messages.success(request, "Old backups sets have been deleted")
+
+    return HttpResponseRedirect(reverse('backups.views.backupsets_list'))

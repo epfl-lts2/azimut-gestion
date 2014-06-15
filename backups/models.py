@@ -1,6 +1,7 @@
 from django.db import models
 
 from servers.models import Server
+from django.utils import timezone
 
 
 class Backup(models.Model):
@@ -71,3 +72,29 @@ class BackupSetOfRun(models.Model):
 
     total_size = models.BigIntegerField(default=0)
     total_files = models.BigIntegerField(default=0)
+
+    def get_status_label(self):
+        VALUES = {'running': 'warning', 'done': 'success', 'canceled': 'important'}
+
+        if self.status in VALUES:
+            return VALUES[self.status]
+        else:
+            return 'important'
+
+    def get_total_time(self):
+        if not self.end_date:
+            end_date = timezone.now()
+        else:
+            end_date = self.end_date
+
+        return int((end_date - self.start_date).total_seconds() / 36.0) / 100.0
+
+    def get_total_time_label(self):
+
+        tt = self.get_total_time()
+
+        if tt < 3.5:
+            return 'success'
+        if tt < 4.0:
+            return 'warning'
+        return 'important'
