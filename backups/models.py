@@ -42,3 +42,31 @@ class BackupRun(models.Model):
         from django.utils import timezone
         import datetime
         return (self.end_date + datetime.timedelta(days=3)) > timezone.now()
+
+
+class BackupSetOfRun(models.Model):
+
+    TYPE_CHOICES = (
+        ('hourly', 'Hourly'),
+        ('daily', 'Daily'),
+        ('weekly', 'Weekly'),
+        ('monthly', 'Monthly'),
+    )
+
+    type = models.CharField(max_length=16, choices=TYPE_CHOICES)
+
+    STATUS_CHOICES = (
+        ('running', 'Running'),
+        ('done', 'Done'),
+        ('canceled', 'Cancelled'),
+    )
+
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES)
+
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
+
+    backups = models.ManyToManyField(BackupRun)
+
+    total_size = models.BigIntegerField()
+    total_files = models.BigIntegerField()
