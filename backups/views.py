@@ -255,3 +255,15 @@ def backupnotifications_switch(request):
         obj.delete()
 
     return render_to_response('backups/backupnotifications/switch.html', {'is_ok': created}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def clean_up_notifications(request):
+
+    for b in BackupNotification.objects.filter(when__lt=timezone.now() - datetime.timedelta(days=15)).all():
+        b.delete()
+
+    messages.success(request, "Old notifications have been deleted")
+
+    return HttpResponseRedirect(reverse('backups.views.backupnotifications_list'))

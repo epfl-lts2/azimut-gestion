@@ -20,4 +20,5 @@ urlpatterns = patterns(
 
     url(r'^notifications$', 'backupnotifications_list'),
     url(r'^notifications/switch$', 'backupnotifications_switch'),
+    url(r'^notifications/cleanup$', 'clean_up_notifications'),
 )
