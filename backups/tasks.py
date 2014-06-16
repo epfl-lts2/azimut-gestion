@@ -3,7 +3,7 @@ from celery import task
 import re
 from django.utils import timezone
 
-from backups.models import Backup, BackupRun, BackupSetOfRun
+from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification
 
 import os
 from django.conf import settings
@@ -36,18 +36,18 @@ def run_backup(id, mode='hourly', backupsetpk=None):
         _notify_set_if_needed()
         return
 
-    os.system('ssh ' + backup.server_to.ssh_connection_string_from_gestion + ' wget ' + settings.GESTION_URL + 'backups/get_conf/' + str(backup.pk) + '/ -O /tmp/azimut-gestion-backup-config-' + str(backup.pk))
+#     os.system('ssh ' + backup.server_to.ssh_connection_string_from_gestion + ' wget ' + settings.GESTION_URL + 'backups/get_conf/' + str(backup.pk) + '/ -O /tmp/azimut-gestion-backup-config-' + str(backup.pk))
+#
+#     to_do_string = ['rsnapshot -c /tmp/azimut-gestion-backup-config-' + str(backup.pk) + ' -v ' + mode]
+#
+#     import subprocess
+#     p = subprocess.Popen(['ssh'] + backup.server_to.ssh_connection_string_from_gestion.split(' ') + [' '.join(to_do_string)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#
+#     out, err = p.communicate()
 
-    to_do_string = ['rsnapshot -c /tmp/azimut-gestion-backup-config-' + str(backup.pk) + ' -v ' + mode]
-
-    import subprocess
-    p = subprocess.Popen(['ssh'] + backup.server_to.ssh_connection_string_from_gestion.split(' ') + [' '.join(to_do_string)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-    out, err = p.communicate()
-
-    # import time
-    # time.sleep(10)
-    # out, err = "1", "2"
+    import time
+    time.sleep(10)
+    out, err = "1", "2"
 
     backuprun.end_date = timezone.now()
     backuprun.stdout = out
@@ -66,6 +66,17 @@ def run_backup(id, mode='hourly', backupsetpk=None):
 
     backuprun.save()
 
+    if not backuprun.nb_files or not backuprun.size:
+        bn = BackupNotification(type='bkpfailled')
+        bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s has failled:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
+    else:
+        bn = BackupNotification(type='bkpfailled')
+        bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s was succesfull:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
+
+    bn.message += "\n\n%s files where copied for a total size of %s." % (str(backuprun.nb_files), str(backuprun.size),)
+    bn.save()
+    bn.send_notifications()
+
     _notify_set_if_needed()
 
 
@@ -79,7 +90,12 @@ def run_active_backups(mode):
         oldbackupruns = BackupSetOfRun.objects.filter(type='hourly', status='running').all()
 
         if oldbackupruns:
-            # TODO: Create a warning
+
+            bn = BackupNotification(type='bkpsetnotstarted')
+            bn.message = "The backupset of type %s whould should have been started at %s was not executed. A previous backupset was still running. If it's not the case, you can, after carefully checked what happened, use the interface to manually ignore the set." % (mode, str(timezone.now()),)
+
+            bn.save()
+            bn.send_notifications()
             print("Aborting run as there is still backup runnning !")
             return
 
@@ -119,7 +135,11 @@ def check_end_of_backupset(backupsetpk, backuprunpk):
             backupset.end_date = timezone.now()
             backupset.status = 'done'
 
-            # TODO: Send mail ?
+            bn = BackupNotification(type='bkpsetdone')
+            bn.message = "The backupset of type %s, started at %s, ended at %s (runned for %s hours) is now Done. %s files where copied for a total size of %s." % (backupset.type, str(backupset.start_date), str(backupset.end_date), str(backupset.get_total_time()), str(backupset.total_files), str(backupset.total_size))
+
+            bn.save()
+            bn.send_notifications()
 
         backupset.save()
 

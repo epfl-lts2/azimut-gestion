@@ -3,6 +3,8 @@ from django.db import models
 from servers.models import Server
 from django.utils import timezone
 
+from django.contrib.auth.models import User
+
 
 class Backup(models.Model):
 
@@ -98,3 +100,38 @@ class BackupSetOfRun(models.Model):
         if tt < 4.0:
             return 'warning'
         return 'important'
+
+
+class BackupNotification(models.Model):
+
+    when = models.DateTimeField(auto_now_add=True)
+
+    TYPE_CHOICES = (
+        ('bkpdone', 'Backup completed'),
+        ('bkpsetdone', 'Set of backup completed'),
+        ('bkpsetnotstarted', 'Set of backup not started'),
+        ('bkpsetcanceled', 'Set of backup canceled'),
+        ('bkpfailled', 'Backup failled'),
+    )
+
+    type = models.CharField(max_length=32, choices=TYPE_CHOICES)
+
+    message = models.TextField()
+
+    def get_type_label(self):
+        VALUES = {'bkpdone': 'success', 'bkpsetdone': 'success', 'bkpsetnotstarted': 'important', 'bkpfailled': 'important', 'bkpsetcanceled': 'warning'}
+
+        if self.type in VALUES:
+            return VALUES[self.type]
+        else:
+            return 'important'
+
+    def send_notifications(self):
+
+        pass
+
+
+class BackupUserWhoWantNotifs(models.Model):
+
+    type = models.CharField(max_length=32, choices=BackupNotification.TYPE_CHOICES)
+    user = models.ForeignKey(User)

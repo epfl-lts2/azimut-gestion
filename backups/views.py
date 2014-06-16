@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from backups.models import Backup, BackupRun, BackupSetOfRun
+from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification
 from backups.forms import BackupForm
 from backups.tasks import run_backup
 
@@ -195,6 +195,11 @@ def backupsets_cancel(request, pk):
     backupset.end_date = timezone.now()
     backupset.save()
 
+    bn = BackupNotification(type='bkpsetcanceled')
+    bn.message = "The backupset of type %s, started at %s, has been set as canceled." % (backupset.type, str(backupset.start_date), )
+    bn.save()
+    bn.send_notifications()
+
     return HttpResponseRedirect(reverse('backups.views.backupsets_list'))
 
 
@@ -213,3 +218,13 @@ def clean_up_old_sets(request):
     messages.success(request, "Old backups sets have been deleted")
 
     return HttpResponseRedirect(reverse('backups.views.backupsets_list'))
+
+
+@login_required
+@staff_member_required
+def backupnotifications_list(request):
+    """Show the list of backup notifications"""
+
+    liste = BackupNotification.objects.order_by('-when').all()
+
+    return render_to_response('backups/backupnotifications/list.html', {'liste': liste}, context_instance=RequestContext(request))
