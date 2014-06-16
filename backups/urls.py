@@ -19,4 +19,5 @@ urlpatterns = patterns(
     url(r'^runs/(?P<pk>[0-9]*)/cancel$', 'backupsets_cancel'),
 
     url(r'^notifications$', 'backupnotifications_list'),
+    url(r'^notifications/switch$', 'backupnotifications_switch'),
 )

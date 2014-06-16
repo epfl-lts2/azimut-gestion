@@ -5,6 +5,8 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 
+from django.core.mail import send_mail
+
 
 class Backup(models.Model):
 
@@ -118,17 +120,31 @@ class BackupNotification(models.Model):
 
     message = models.TextField()
 
-    def get_type_label(self):
-        VALUES = {'bkpdone': 'success', 'bkpsetdone': 'success', 'bkpsetnotstarted': 'important', 'bkpfailled': 'important', 'bkpsetcanceled': 'warning'}
+    VALUES = {'bkpdone': 'success', 'bkpsetdone': 'success', 'bkpsetnotstarted': 'important', 'bkpfailled': 'important', 'bkpsetcanceled': 'warning'}
 
-        if self.type in VALUES:
-            return VALUES[self.type]
+    @staticmethod
+    def get_types_with_labels():
+        retour = []
+
+        for (key, text) in BackupNotification.TYPE_CHOICES:
+            retour.append((key, text, BackupNotification.VALUES[key]))
+
+        return retour
+
+    def get_type_label(self):
+
+        if self.type in self.VALUES:
+            return self.VALUES[self.type]
         else:
             return 'important'
 
     def send_notifications(self):
 
-        pass
+        subject = "Notification from AzimutGestion: %s" % (self.get_type_display(), )
+
+        recpts = [buwwn.user.email for buwwn in BackupUserWhoWantNotifs.objects.filter(type=self.type).all()]
+
+        send_mail(subject, self.message, 'norepoly@azimut-prod.com', recpts, True)
 
 
 class BackupUserWhoWantNotifs(models.Model):

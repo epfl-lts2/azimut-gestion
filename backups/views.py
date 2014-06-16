@@ -16,9 +16,11 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification
+from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification, BackupUserWhoWantNotifs
 from backups.forms import BackupForm
 from backups.tasks import run_backup
+
+from django.contrib.auth.models import User
 
 from django.utils import timezone
 import datetime
@@ -227,4 +229,29 @@ def backupnotifications_list(request):
 
     liste = BackupNotification.objects.order_by('-when').all()
 
-    return render_to_response('backups/backupnotifications/list.html', {'liste': liste}, context_instance=RequestContext(request))
+    notif_types = BackupNotification.get_types_with_labels()
+
+    users_with_things = []
+
+    for u in User.objects.order_by('username').all():
+        data = []
+
+        for key, __, __ in notif_types:
+            data.append((key, BackupUserWhoWantNotifs.objects.filter(type=key, user=u).count() > 0))
+
+        users_with_things.append((u, data))
+
+    return render_to_response('backups/backupnotifications/list.html', {'liste': liste, 'notif_types': notif_types, 'users_with_things': users_with_things}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def backupnotifications_switch(request):
+    """Switch a backup notification"""
+
+    (obj, created) = BackupUserWhoWantNotifs.objects.get_or_create(type=request.GET.get('key'), user=get_object_or_404(User, pk=request.GET.get('uPk')))
+
+    if not created:
+        obj.delete()
+
+    return render_to_response('backups/backupnotifications/switch.html', {'is_ok': created}, context_instance=RequestContext(request))
