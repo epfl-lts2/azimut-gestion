@@ -36,18 +36,14 @@ def run_backup(id, mode='hourly', backupsetpk=None):
         _notify_set_if_needed()
         return
 
-#     os.system('ssh ' + backup.server_to.ssh_connection_string_from_gestion + ' wget ' + settings.GESTION_URL + 'backups/get_conf/' + str(backup.pk) + '/ -O /tmp/azimut-gestion-backup-config-' + str(backup.pk))
-#
-#     to_do_string = ['rsnapshot -c /tmp/azimut-gestion-backup-config-' + str(backup.pk) + ' -v ' + mode]
-#
-#     import subprocess
-#     p = subprocess.Popen(['ssh'] + backup.server_to.ssh_connection_string_from_gestion.split(' ') + [' '.join(to_do_string)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#
-#     out, err = p.communicate()
+    os.system('ssh ' + backup.server_to.ssh_connection_string_from_gestion + ' wget ' + settings.GESTION_URL + 'backups/get_conf/' + str(backup.pk) + '/ -O /tmp/azimut-gestion-backup-config-' + str(backup.pk))
 
-    import time
-    time.sleep(10)
-    out, err = "1", "2"
+    to_do_string = ['rsnapshot -c /tmp/azimut-gestion-backup-config-' + str(backup.pk) + ' -v ' + mode]
+
+    import subprocess
+    p = subprocess.Popen(['ssh'] + backup.server_to.ssh_connection_string_from_gestion.split(' ') + [' '.join(to_do_string)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    out, err = p.communicate()
 
     backuprun.end_date = timezone.now()
     backuprun.stdout = out
