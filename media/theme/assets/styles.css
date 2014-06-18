@@ -232,7 +232,7 @@ body {
   top: -1px;
   left: -1px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: bold;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
@@ -249,7 +249,7 @@ body {
   top: -1px;
   left: -1px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: bold;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
@@ -258,3 +258,5 @@ body {
      -moz-border-radius: 4px 0 4px 0;
           border-radius: 4px 0 4px 0;
 }
+
+

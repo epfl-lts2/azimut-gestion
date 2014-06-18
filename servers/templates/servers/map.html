@@ -3,7 +3,7 @@
 {% load bootstrap_toolkit %}
 
 
-{% block title %}Servers map{% endblock %}
+{% block title %}{% trans "Servers map" %}{% endblock %}
 
 {% block content %}
 
@@ -18,7 +18,7 @@
 
             <ul class="thumbnails">
 
-                {% include "servers/_map_server.html" with s=s only %}
+                {% include "servers/_map_server.html" with s=s isProxmoxDesign=True only %}
 
                 <li style="clear: both; margin-left: 0px;"></li>
 
