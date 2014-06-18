@@ -23,7 +23,7 @@ from main.forms import UserForm, UserOwnForm, UserSshKey, SshKeyForm
 from main.models import SshKey
 from groups.models import Group
 from main.tasks import update_git_repo
-from backups.models import Backup
+from backups.models import Backup, BackupSetOfRun
 from servers.models import Server
 
 
@@ -48,7 +48,12 @@ def home(request):
 
     backups = Backup.objects.order_by('name').all()
 
-    return render_to_response('main/home.html', {'backups': backups}, context_instance=RequestContext(request))
+    last_hourlys = BackupSetOfRun.objects.order_by('-start_date').filter(type='hourly').all()
+    last_daily = BackupSetOfRun.objects.order_by('-start_date').filter(type='daily').all()
+    last_weekly = BackupSetOfRun.objects.order_by('-start_date').filter(type='weekly').all()
+    last_monthly = BackupSetOfRun.objects.order_by('-start_date').filter(type='monthly').all()
+
+    return render_to_response('main/home.html', {'backups': backups, 'last_daily': last_daily, 'last_weekly': last_weekly, 'last_hourlys': last_hourlys, 'last_monthly': last_monthly}, context_instance=RequestContext(request))
 
 
 @login_required

@@ -117,3 +117,10 @@ Update `settingsLocal.py`:
 Add a portforwarding entry to your ngnix server, from port 443 to port 443.
 
 You can now add hostnameforwarding entry from the port 443 to your server (using port 80 as destination !).
+
+## Zabbix
+
+To monitor backups with zabbix, add this to one of your zabbix agent
+`UserParameter=azimutgestion.[*],wget http://GESTION_HOST/backups/zabbix/$1/$2 -O - -o /dev/null`
+
+and use the zabbix template 'Azmiut-gestion: Backups'

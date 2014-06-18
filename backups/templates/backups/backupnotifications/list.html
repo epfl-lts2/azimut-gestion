@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}Backup notifications{% endblock %}
+
+{% block content %}
+
+	<h3>{% trans "Backups notifications" %}</h3>
+
+	<script type="text/javascript">$(function() { $('#menu-backupnotifications').addClass('active'); });</script>
+
+	<div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+		<div class="navbar navbar-inner block-header">
+			<div class="muted pull-left">{% trans "List of backups notifications" %}</div>
+		</div>
+			<div class="block-content collapse in">
+				<div class="span12">
+
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-to-sort-but-not-automaticaly">
+						<thead>
+							<tr>
+								<th>{% trans "When" %}</th>
+								<th>{% trans "Type" %}</th>
+								<th>{% trans "Message" %}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for elem in liste %}
+								<tr>
+									<td>{{elem.when}} ({{elem.when|timesince}})</td>
+									<td><span class="label label-{{elem.get_type_label}}">{{elem.get_type_display}}</span></td>
+									<td><pre>{{elem.message}}</pre></td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+					<div class="row-fluid box-section" style="text-align: right;">
+						<a href="{% url 'backups.views.clean_up_notifications' %}" class="btn btn-danger"><i class="icon-minus icon-white"></i> {% trans "Cleanup olds notifications >15 days" %}</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+        <div class="block">
+		<div class="navbar navbar-inner block-header">
+			<div class="muted pull-left">{% trans "Notifications" %}</div>
+		</div>
+			<div class="block-content collapse in">
+				<div class="span12">
+
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>{% trans "User" %}</th>
+								{% for key, text, label in notif_types %}
+									<th><span class="label label-{{label}}">{{text}}</span></th>
+								{% endfor %}
+							</tr>
+						</thead>
+						<tbody>
+							{% for u, data in users_with_things %}
+								<tr>
+									<td>{{u.get_full_name}}</td>
+									{% for key, has in data %}
+									<td onclick="switch_val('{{u.pk}}', '{{key}}', this);" style="cursor: pointer;"><span class="label label-{{hey|yesno:"success,important"}}">{{has|yesno}}</span></td>
+									{% endfor %}
+								</tr>
+
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		function switch_val(uPk, key, elem) {
+
+			$.ajax({
+			url: "{% url 'backups.views.backupnotifications_switch' %}",
+			data: {
+				uPk: uPk,
+				key: key
+			},
+			type: "GET",
+			success: function(data) {
+				$(elem).html(data);
+			},
+			});
+
+		}
+
+	</script>
+{% endblock %}

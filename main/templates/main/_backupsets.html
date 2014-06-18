@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div class="block">
+
+	<div class="navbar navbar-inner block-header">
+		<div class="muted pull-left">{% trans "Backups sets" %}</div>
+	</div>
+	<div class="block-content collapse in">
+		
+		<table class="table table-condensed table-hover">
+            <tr><th>{% trans "Type" %}</th><th>{% trans "Last backup" %}</th><th>{% trans "Status" %}</th><th>{% trans "Total time" %}</th><th>Size</th></tr>
+                {% with last_hourlys.0 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_hourlys.1 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_daily.0 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_daily.1 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_weekly.0 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_weekly.1 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_monthly.0 as b %}{% include "main/_backupset.html" %}{% endwith %}
+                {% with last_monthly.1 as b %}{% include "main/_backupset.html" %}{% endwith %}
+			</table>
+	</div>
+</div>

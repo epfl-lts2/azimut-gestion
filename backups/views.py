@@ -16,12 +16,15 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from backups.models import Backup, BackupRun
+from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification, BackupUserWhoWantNotifs
 from backups.forms import BackupForm
 from backups.tasks import run_backup
 
+from django.contrib.auth.models import User
+
 from django.utils import timezone
 import datetime
+import json
 
 
 @login_required
@@ -167,8 +170,160 @@ backup\t""" + cox + ':' + backup.folder_from + """\t.
 @staff_member_required
 def clean_up(request):
 
-    BackupRun.objects.filter(start_date__lt=timezone.now() - datetime.timedelta(days=1)).delete()
+    for b in BackupRun.objects.filter(start_date__lt=timezone.now() - datetime.timedelta(days=1)).all():
+        if b.backupsetofrun_set.count() == 0:
+            b.delete()
 
     messages.success(request, "Old backups runs have been deleted")
 
     return HttpResponseRedirect(reverse('backups.views.backups_list'))
+
+
+@login_required
+@staff_member_required
+def backupsets_list(request):
+    """Show the list of backup sets"""
+
+    liste = BackupSetOfRun.objects.order_by('-start_date').all()
+
+    return render_to_response('backups/backupsets/list.html', {'liste': liste}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def backupsets_cancel(request, pk):
+
+    backupset = get_object_or_404(BackupSetOfRun, pk=pk, status='running')
+    backupset.status = 'canceled'
+    backupset.end_date = timezone.now()
+    backupset.save()
+
+    bn = BackupNotification(type='bkpsetcanceled')
+    bn.message = "The backupset of type %s, started at %s, has been set as canceled." % (backupset.type, str(backupset.start_date), )
+    bn.save()
+    bn.send_notifications()
+
+    return HttpResponseRedirect(reverse('backups.views.backupsets_list'))
+
+
+@login_required
+@staff_member_required
+def clean_up_old_sets(request):
+
+    NB_OK = {'hourly': 6, 'daily': 7, 'weekly': 7, 'monthly': 3}
+
+    for b in BackupSetOfRun.objects.order_by('-start_date').all():
+        if NB_OK[b.type] >= 0:
+            NB_OK[b.type] -= 1
+        else:
+            b.delete()
+
+    messages.success(request, "Old backups sets have been deleted")
+
+    return HttpResponseRedirect(reverse('backups.views.backupsets_list'))
+
+
+@login_required
+@staff_member_required
+def backupnotifications_list(request):
+    """Show the list of backup notifications"""
+
+    liste = BackupNotification.objects.order_by('-when').all()
+
+    notif_types = BackupNotification.get_types_with_labels()
+
+    users_with_things = []
+
+    for u in User.objects.order_by('username').all():
+        data = []
+
+        for key, __, __ in notif_types:
+            data.append((key, BackupUserWhoWantNotifs.objects.filter(type=key, user=u).count() > 0))
+
+        users_with_things.append((u, data))
+
+    return render_to_response('backups/backupnotifications/list.html', {'liste': liste, 'notif_types': notif_types, 'users_with_things': users_with_things}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def backupnotifications_switch(request):
+    """Switch a backup notification"""
+
+    (obj, created) = BackupUserWhoWantNotifs.objects.get_or_create(type=request.GET.get('key'), user=get_object_or_404(User, pk=request.GET.get('uPk')))
+
+    if not created:
+        obj.delete()
+
+    return render_to_response('backups/backupnotifications/switch.html', {'is_ok': created}, context_instance=RequestContext(request))
+
+
+@login_required
+@staff_member_required
+def clean_up_notifications(request):
+
+    for b in BackupNotification.objects.filter(when__lt=timezone.now() - datetime.timedelta(days=15)).all():
+        b.delete()
+
+    messages.success(request, "Old notifications have been deleted")
+
+    return HttpResponseRedirect(reverse('backups.views.backupnotifications_list'))
+
+
+def zabbix_list(request):
+
+    data = []
+
+    for b in Backup.objects.filter(active=True).all():
+        data.append({'{#BACKUP_ID}': b.pk, '{#BACKUP_NAME}': b.name})
+
+    # return HttpResponse(build_zabbix_json(data))
+    return HttpResponse(json.dumps({'data': data}))
+
+
+def zabbix_last_nb_hours(request, pk, mode):
+
+    backup = get_object_or_404(Backup, pk=pk)
+
+    elem = backup.backuprun_set.order_by('-start_date').exclude(end_date=None).filter(type=mode)
+
+    if elem.count() == 0:
+        return HttpResponse('0')
+
+    last_elem = elem.all()[0]
+
+    diff = (timezone.now() - last_elem.start_date).total_seconds() / 3600.0
+
+    diff = int(diff)
+
+    if diff == 0:
+        diff = 1
+
+    return HttpResponse(str(diff))
+
+
+def zabbix_last_files_or_size(request, pk, mode):
+
+
+    backup = get_object_or_404(Backup, pk=pk)
+
+    elem = backup.backuprun_set.order_by('-start_date').exclude(end_date=None).filter(type='hourly')
+
+    if elem.count() == 0:
+        return HttpResponse('0')
+
+    last_elem = elem.all()[0]
+
+    val = last_elem.size if mode == 'size' else last_elem.nb_files
+
+    return HttpResponse(str(val))
+
+
+def zabbix_last_hourly_duration(request):
+
+    bs = BackupSetOfRun.objects.filter(type='hourly', status='done').exclude(total_size=0).order_by('-start_date')
+
+    if bs.count():
+        return HttpResponse(str(bs.get_total_time()))
+
+    return HttpResponse("0")
