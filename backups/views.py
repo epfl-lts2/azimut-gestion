@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 
 from django.utils import timezone
 import datetime
+import json
 
 
 @login_required
@@ -267,3 +268,62 @@ def clean_up_notifications(request):
     messages.success(request, "Old notifications have been deleted")
 
     return HttpResponseRedirect(reverse('backups.views.backupnotifications_list'))
+
+
+def zabbix_list(request):
+
+    data = []
+
+    for b in Backup.objects.filter(active=True).all():
+        data.append({'{#BACKUP_ID}': b.pk, '{#BACKUP_NAME}': b.name})
+
+    # return HttpResponse(build_zabbix_json(data))
+    return HttpResponse(json.dumps({'data': data}))
+
+
+def zabbix_last_nb_hours(request, pk, mode):
+
+    backup = get_object_or_404(Backup, pk=pk)
+
+    elem = backup.backuprun_set.order_by('-start_date').exclude(end_date=None).filter(type=mode)
+
+    if elem.count() == 0:
+        return HttpResponse('0')
+
+    last_elem = elem.all()[0]
+
+    diff = (timezone.now() - last_elem.start_date).total_seconds() / 3600.0
+
+    diff = int(diff)
+
+    if diff == 0:
+        diff = 1
+
+    return HttpResponse(str(diff))
+
+
+def zabbix_last_files_or_size(request, pk, mode):
+
+
+    backup = get_object_or_404(Backup, pk=pk)
+
+    elem = backup.backuprun_set.order_by('-start_date').exclude(end_date=None).filter(type='hourly')
+
+    if elem.count() == 0:
+        return HttpResponse('0')
+
+    last_elem = elem.all()[0]
+
+    val = last_elem.size if mode == 'size' else last_elem.nb_files
+
+    return HttpResponse(str(val))
+
+
+def zabbix_last_hourly_duration(request):
+
+    bs = BackupSetOfRun.objects.filter(type='hourly', status='done').exclude(total_size=0).order_by('-start_date')
+
+    if bs.count():
+        return HttpResponse(str(bs.get_total_time()))
+
+    return HttpResponse("0")

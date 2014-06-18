@@ -11,6 +11,7 @@
 					<tr>
 						<th>{% trans "Start date" %}</th>
 						<th>{% trans "End date" %}</th>
+						<th>{% trans "Type" %}</th>
 						<th>{% trans "Size" %}</th>
 						<th>{% trans "Nb files" %}</th>
 						<th style="width: 25%;">{% trans "Stdout" %}</th>
@@ -22,6 +23,7 @@
 						<tr>
 							<td>{{elem.start_date|date:"Y/m/d"}} {{elem.start_date|time}}</td>
 							<td>{% if elem.end_date %}{{elem.end_date|date}} {{elem.end_date|time}} ({{elem.end_date|timesince}}){% else %}{% trans "In progress or failled" %}{% endif %}</td>
+							<td>{{elem.get_type_display}}</td>
 							<td>{{elem.size|filesizeformat}}</td>
 							<td>{{elem.nb_files}}</td>
 							<td><pre>{{elem.stdout|default:""}}</pre></td>

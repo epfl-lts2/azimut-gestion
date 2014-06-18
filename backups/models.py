@@ -43,6 +43,15 @@ class BackupRun(models.Model):
     stdout = models.TextField(blank=True, null=True)
     stderr = models.TextField(blank=True, null=True)
 
+    TYPE_CHOICES = (
+        ('hourly', 'Hourly'),
+        ('daily', 'Daily'),
+        ('weekly', 'Weekly'),
+        ('monthly', 'Monthly'),
+    )
+
+    type = models.CharField(max_length=16, choices=TYPE_CHOICES)
+
     def not_too_old(self):
         from django.utils import timezone
         import datetime

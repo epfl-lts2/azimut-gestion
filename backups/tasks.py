@@ -18,7 +18,7 @@ def run_backup(id, mode='hourly', backupsetpk=None):
     backup = Backup.objects.get(pk=id)
 
     # Create the run
-    backuprun = BackupRun(backup=backup, start_date=timezone.now())
+    backuprun = BackupRun(backup=backup, start_date=timezone.now(), type=mode)
     backuprun.save()
 
     def _notify_set_if_needed():
