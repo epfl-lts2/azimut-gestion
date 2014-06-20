@@ -62,14 +62,19 @@ def run_backup(id, mode='hourly', backupsetpk=None):
 
     backuprun.save()
 
-    if not backuprun.nb_files or not backuprun.size:
-        bn = BackupNotification(type='bkpfailled')
-        bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s has failled:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
-    else:
-        bn = BackupNotification(type='bkpdone')
-        bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s was succesfull:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
+    if mode == 'hourly':
+        if not backuprun.nb_files or not backuprun.size:
+            bn = BackupNotification(type='bkpfailled')
+            bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s has failled:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
+        else:
+            bn = BackupNotification(type='bkpdone')
+            bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s was succesfull:" % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
 
-    bn.message += "\n\n%s files where copied for a total size of %s." % (str(backuprun.nb_files), str(backuprun.size),)
+        bn.message += "\n\n%s files where copied for a total size of %s." % (str(backuprun.nb_files), str(backuprun.size),)
+    else:
+            bn = BackupNotification(type='bkpdone')
+            bn.message = "The backuprun for the backup %s started at %s, ended at %s, type %s was probably succesfull." % (backuprun.backup.name, str(backuprun.start_date), str(backuprun.end_date), mode,)
+
     bn.save()
     bn.send_notifications()
 
