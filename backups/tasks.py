@@ -11,7 +11,7 @@ from django.conf import settings
 from app.utils import DjangoLock
 
 
-@task(ignore_result=True)
+@task(ignore_result=True, queue="backups")
 def run_backup(id, mode='hourly', backupsetpk=None):
     """Run a backup"""
 
@@ -81,7 +81,7 @@ def run_backup(id, mode='hourly', backupsetpk=None):
     _notify_set_if_needed()
 
 
-@task(ignore_result=True)
+@task(ignore_result=True, queue="backups")
 def run_active_backups(mode):
     """Run all actives backups"""
 
@@ -114,7 +114,7 @@ def run_active_backups(mode):
         run_backup.delay(bkp.pk, mode, backupset.pk)
 
 
-@task(ignore_result=True)
+@task(ignore_result=True, queue="backups")
 def check_end_of_backupset(backupsetpk, backuprunpk):
 
     l = DjangoLock(settings.BACKUP_SET_LOCK)
