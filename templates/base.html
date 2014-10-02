@@ -140,6 +140,10 @@
                             <li id="menu-logstash">
                                 <a href="{% url "logstash.views.file_list" %}"><i class="icon-chevron-right"></i> {% trans "Logstash" %}</a>
                             </li>
+
+                            <li id="menu-dns">
+                                <a href="{% url "dnsgestion.views.zones_list" %}"><i class="icon-chevron-right"></i> {% trans "DNS" %}</a>
+                            </li>
                         {% endif %}
                         
                     </ul>

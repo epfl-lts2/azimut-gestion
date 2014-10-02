@@ -1,0 +1,41 @@
+{% load i18n %}
+
+<div class="block">
+
+    <div class="navbar navbar-inner block-header">
+        <div class="muted pull-left">{% trans "Entries" %}</div>
+    </div>
+    <div class="block-content collapse in">
+
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans "Label" %}</th>
+                    <th>{% trans "Class" %}</th>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Value" %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for e in object.entries %}
+            <tr {% if e.disabled %}style="color: #ccc;"{% endif %}>
+                    <td>{{e.label}}</td>
+                    <td>{{e.get_entry_class_display}}</td>
+                    <td>{{e.get_entry_type_display}}</td>
+                    <td>{{e.value}}</td>
+                    <td>
+                        <a href="{% url 'dnsgestion.views.entry_delete' e.pk %}" class="btn btn-mini btn btn-danger" onclick="return confirm('{% trans "Are you sure ?" %}');"><i class="icon-remove icon-white"></i> {% trans "Delete" %}</a>
+                        <a href="{% url 'dnsgestion.views.entry_edit' e.pk %}" class="btn btn-mini btn-primary"><i class="icon-pencil icon-white"></i> {% trans "Edit" %}</a>
+                        <a href="{% url 'dnsgestion.views.entry_up' e.pk %}" class="btn btn-mini btn-info"><i class="icon-arrow-up icon-white"></i></a>
+                        <a href="{% url 'dnsgestion.views.entry_down' e.pk %}" class="btn btn-mini btn-info"><i class="icon-arrow-down icon-white"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div class="row-fluid box-section" style="text-align: right;">
+            <a href="{% url 'dnsgestion.views.entry_edit' '0' %}?zone={{object.pk}}" class="btn btn-success"><i class="icon-plus icon-white"></i> {% trans "Add" %}</a>
+        </div>
+
+    </div>
+</div>

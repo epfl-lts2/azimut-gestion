@@ -33,6 +33,7 @@ class Server(models.Model):
     samba_base_folder = models.CharField(max_length=255, blank=True, null=True, default='')
 
     logstash_shipper = models.BooleanField(default=False)
+    bind_server = models.BooleanField(default=False, help_text='Include a bind server')
 
     users_owning_the_server = models.ManyToManyField(User, blank=True, null=True, help_text='Keys of users will be allowed and he will be able do display the server page details')
 

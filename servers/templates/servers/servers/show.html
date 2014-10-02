@@ -151,6 +151,11 @@
 								<div class="controls controls-txt">{{object.logstash_shipper|yesno}}</div>
 							</div>
 
+							<div class="control-group control-group-txt">
+								<label class="control-label control-label-txt">{% trans "Bind server ?" %}</label>
+								<div class="controls controls-txt">{{object.bind_server|yesno}}</div>
+							</div>
+
 							{% if object.serveruser_set.all %}
 								<div class="control-group control-group-txt">
 									<label class="control-label control-label-txt">{% trans "Users" %}</label>

@@ -19,6 +19,7 @@ urlpatterns = patterns(
     url(r'^wizards/', include('wizard.urls')),
     url(r'^samba/', include('samba.urls')),
     url(r'^logstash/', include('logstash.urls')),
+    url(r'^dns/', include('dnsgestion.urls')),
 
     (r'^users/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     (r'^users/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),

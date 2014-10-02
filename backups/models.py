@@ -153,7 +153,7 @@ class BackupNotification(models.Model):
 
         recpts = [buwwn.user.email for buwwn in BackupUserWhoWantNotifs.objects.filter(type=self.type).all()]
 
-        send_mail(subject, self.message, 'norepoly@azimut-prod.com', recpts, True)
+        send_mail(subject, self.message, 'noreply@azimut-prod.com', recpts, True)
 
 
 class BackupUserWhoWantNotifs(models.Model):

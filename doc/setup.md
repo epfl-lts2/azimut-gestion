@@ -124,3 +124,17 @@ To monitor backups with zabbix, add this to one of your zabbix agent
 `UserParameter=azimutgestion.[*],wget http://GESTION_HOST/backups/zabbix/$1/$2 -O - -o /dev/null`
 
 and use the zabbix template 'Azmiut-gestion: Backups'
+
+# Bind
+
+To use the bind system, you need to install bind:
+
+`apt-get install bind9`
+
+Edit `/etc/bind/named.conf`, add `include "/etc/bind/named.conf.gestion";`
+
+Edit your settingsLocal.py, add `DNS_SECRET = 'ASecret'`
+
+At this point the bind server won't work. Use the gestion interface and add it as a bind server, then publish a first zone :)
+
+

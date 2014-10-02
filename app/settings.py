@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'wizard',
     'samba',
     'logstash',
+    'dnsgestion',
 )
 
 LOGGING = {
