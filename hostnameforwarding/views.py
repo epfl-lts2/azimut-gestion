@@ -151,7 +151,7 @@ server {
 }
 """
 
-    for host in obj.hoststoforward.all():
+    for host in obj.hoststoforward.filter(base_path='/').all():
         script += """server {
     listen """ + str(host.port_from) + """;
     server_name """ + host.domain + """;
@@ -160,28 +160,35 @@ server {
     """
 
         if not host.force_https:
-            script += """location / {
+
+            for sub_host in obj.hoststoforward.filter(domain=host.domain):
+
+                script += """location """ + sub_host.base_path + """ {
+                """
+
+                if sub_host.base_path != '/':
+                    script += """        rewrite ^/""" + sub_host.base_path[:-1] + """(/.*)$ $1 break;
             """
 
-            if host.port_to == 80:
-                script += """        proxy_pass http://""" + host.server_to.internal_ip + """/;
-        """
-            else:
-                script += """        proxy_pass http://""" + host.server_to.internal_ip + """:""" + str(host.port_to) + """/;
-        """
+                if sub_host.port_to == 80:
+                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + """/;
+            """
+                else:
+                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + """:""" + str(sub_host.port_to) + """/;
+            """
 
-            if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
-                script += """        proxy_redirect          http:// https://;
-        """
+                if sub_host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
+                    script += """        proxy_redirect          http:// https://;
+            """
 
-            script += """        access_log off;
-        proxy_set_header        X-Real-IP       $remote_addr;
-        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header        Host            $host;
-        proxy_set_header        X-Forwarded-Proto $scheme;
+                script += """        access_log off;
+            proxy_set_header        X-Real-IP       $remote_addr;
+            proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header        Host            $host;
+            proxy_set_header        X-Forwarded-Proto $scheme;
 
-        }
-        """
+            }
+            """
 
         if host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':
             script += """        ssl on;
