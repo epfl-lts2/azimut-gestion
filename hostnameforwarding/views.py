@@ -161,7 +161,7 @@ server {
 
         if not host.force_https:
 
-            for sub_host in obj.hoststoforward.filter(domain=host.domain):
+            for sub_host in obj.hoststoforward.filter(domain=host.domain, port_from=host.port_from):
 
                 script += """location """ + sub_host.base_path + """ {
                 """
