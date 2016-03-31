@@ -166,15 +166,15 @@ server {
                 script += """location """ + sub_host.base_path + """ {
                 """
 
-                if sub_host.base_path != '/':
+                if sub_host.base_path != '/' and sub_host.dest_path != '/':
                     script += """        rewrite ^/""" + sub_host.base_path[:-1] + """(/.*)$ $1 break;
             """
 
                 if sub_host.port_to == 80:
-                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + """/;
+                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + sub_host.dest_path + """;
             """
                 else:
-                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + """:""" + str(sub_host.port_to) + """/;
+                    script += """        proxy_pass http://""" + sub_host.server_to.internal_ip + """:""" + str(sub_host.port_to) + sub_host.dest_path + """;
             """
 
                 if sub_host.port_from == 443 and settings.NGNIX_SSL_PEM != '' and settings.NGNIX_SSL_KEY != '':

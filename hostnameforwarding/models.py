@@ -8,6 +8,7 @@ class Hostnameforwarded(models.Model):
     server_to = models.ForeignKey(Server, related_name='hostforwarded')
     domain = models.CharField(max_length=255)
     base_path = models.CharField(max_length=255, default='/')
+    dest_path = models.CharField(max_length=255, default='/')
 
     port_from = models.IntegerField(default=80)
     port_to = models.IntegerField(default=80)
