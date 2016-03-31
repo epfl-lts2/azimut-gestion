@@ -166,7 +166,7 @@ server {
                 script += """location """ + sub_host.base_path + """ {
                 """
 
-                if sub_host.base_path != '/' and sub_host.dest_path != '/':
+                if sub_host.base_path != '/' and sub_host.dest_path == '/':
                     script += """        rewrite ^/""" + sub_host.base_path[:-1] + """(/.*)$ $1 break;
             """
 
