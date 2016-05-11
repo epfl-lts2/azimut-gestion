@@ -6,6 +6,8 @@ from django.utils import timezone
 from backups.models import Backup, BackupRun, BackupSetOfRun, BackupNotification
 
 import os
+import time
+import random
 from django.conf import settings
 
 from app.utils import DjangoLock
@@ -14,6 +16,8 @@ from app.utils import DjangoLock
 @task(ignore_result=True, queue="backups")
 def run_backup(id, mode='hourly', backupsetpk=None):
     """Run a backup"""
+
+    time.sleep(random.randint(1, 600))
 
     backup = Backup.objects.get(pk=id)
 
