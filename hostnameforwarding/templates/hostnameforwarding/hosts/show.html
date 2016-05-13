@@ -7,6 +7,8 @@
 
 {% block content %}
 
+	<div class="alert alert-danger">{% trans "Hostname feature disabled !" %}</div>
+
 	<h3>{{object.domain}}:{{object.port_from}} --> {{object.server_to.internal_ip}}:{{object.port_to}}</h3>
 
 	<script type="text/javascript">$(function() { $('#menu-hostnameforwarding').addClass('active'); });</script>
